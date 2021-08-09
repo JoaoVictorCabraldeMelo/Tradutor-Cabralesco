@@ -1,8 +1,13 @@
 int list IL;
 float list FL;
 
+int show_variable(int x){
+	writeln(x);
+	return x;
+}
+
 int list read_list(int n) {
-	int i;
+	float i;
 	i =  -435.7;
 	int list new;
 	new = NIL;
@@ -12,6 +17,7 @@ int list read_list(int n) {
 		read(elem);
 		new = elem : new;
 	}
+	show_variable(i);
 	return new;
 }
 

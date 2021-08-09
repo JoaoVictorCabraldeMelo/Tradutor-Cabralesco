@@ -1,5 +1,5 @@
 %option noinput nounput
-
+/*%option noyywrap*/
 %{
 #include <stdio.h>
 #define BLK "\e[0;30m"
@@ -13,10 +13,12 @@
 #define RESET "\e[0m"
 int lines = 0;
 int columns = 0;
-int error = 0;
+int errors = 0;
 %}
 
 ID [A-Za-z_]+[A-Za-z0-9_]*
+
+LETTER [A-Za-z]
 
 DIGIT [0-9]
 
@@ -52,48 +54,48 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 }
 
 "||"|"&&" {
-  printf("Logical Operator: %s\n", yytext);
+  printf("Logical Operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n"RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 ">"|">="|"<"|"<="|"=="|"!=" {
-  printf("Bin Operator: %s\n", yytext);
+  printf("Bin Operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 "{"|"}" {
-  printf("Scopes: %s\n", yytext);
+  printf("Scopes:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 "("|")" {
-  printf("Expressions: %s\n", yytext);
+  printf("Expressions:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 ";" {
-  printf("End of expression: %s\n", yytext);
+  printf("End of expression:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 "," { 
-  printf("Value separator: %s\n", yytext);
+  printf("Value separator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 
 \? {
-  printf("Head operator: %s\n", yytext);
+  printf("Head operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 \! {
-  printf("Tail operator or negate operator: %s\n", yytext);
+  printf("Tail operator or negate operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 \% {
-  printf("Tail operator with destructor: %s\n", yytext);
+  printf("Tail operator with destructor:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
@@ -107,87 +109,90 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   columns = 0;
 }
 
-
-
 {COMMENT} {
   columns += yyleng;
 }
 
 {STRING} {
-  printf("String: %s\n", yytext);
+  printf("String:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {DIGIT}*\.{DIGIT}+(E[+|-]?{DIGIT}+)? {
-  printf("Float number: %s\n", yytext);
+  printf("Float number:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {DIGIT}+ {
-  printf("Integer number: %s\n", yytext);
+  printf("Integer number:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 
 {LIST} {
-  printf("List type: %s\n", yytext);
+  printf("List type:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {TYPES} {
-  printf("Basic type: %s\n", yytext);
+  printf("Basic type:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {NULL} {
-  printf("Empty List: %s\n", yytext);
+  printf("Empty List:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {ASSIGN} {
-  printf("Assign operator: %s\n", yytext);
+  printf("Assign operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {KEYWORD} {
-  printf("Keyword: %s\n", yytext);
+  printf("Keyword:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {OUTPUT} {
-  printf("Output: %s\n", yytext);
+  printf("Output:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {INPUT} {
-  printf("Input: %s\n", yytext);
+  printf("Input:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {CONSTRUCTOR} {
-  printf("Constructor: %s\n", yytext);
+  printf("Constructor:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {INFIX} {
-  printf("Infix operator: %s\n", yytext);
+  printf("Infix operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 {FUNCTION} {
-  printf("Function operator: %s\n", yytext);
+  printf("Function operator:" GRN " %s" RESET "\t at line:" YEL " %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
 
 {ID} {
-  printf("ID: %s\n", yytext);
+  printf("ID:" GRN " %s" RESET "\t at line:" YEL" %d" RESET " and column:" YEL " %d\n" RESET, yytext, lines, columns);
   columns += yyleng;
 }
 
+{DIGIT}+{LETTER}+ {
+   errors++;
+  printf(RED "Error: %s" RESET " Not a valid token at line: %d and column: %d\n", yytext, lines, columns);
+}
+
 . {
-  error++;
-  printf("Error: Unidentified token at line: %d and column: %d\n", lines, columns);
+  errors++;
+  printf(RED "Error: %s" RESET " Unidentified token at line: %d and column: %d\n", yytext, lines, columns);
 }
 
 %%
