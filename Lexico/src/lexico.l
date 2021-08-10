@@ -38,7 +38,7 @@ OUTPUT writeln|write
 
 INPUT read
 
-CONSTRUCTOR rvalue|leftvalue 
+CONSTRUCTOR rvalue|lvalue 
 
 INFIX :
 
