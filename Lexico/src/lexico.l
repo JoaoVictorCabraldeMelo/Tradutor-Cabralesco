@@ -185,11 +185,6 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   columns += yyleng;
 }
 
-{DIGIT}+{LETTER}+ {
-   errors++;
-  printf(RED "Error: %s" RESET " Not a valid token at line: %d and column: %d\n", yytext, lines, columns);
-}
-
 . {
   errors++;
   printf(RED "Error: %s" RESET " Unidentified token at line: %d and column: %d\n", yytext, lines, columns);

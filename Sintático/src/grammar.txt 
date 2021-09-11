@@ -1,6 +1,6 @@
 program -> paramList
 
-paramList -> param paramList | param  
+paramList -> paramList param | param  
 
 param -> variableParam | functionParam
 

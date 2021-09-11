@@ -1,4 +1,4 @@
 int main() {
-  writln("Oi");
+  writeln("Oi");
   return 0;
 }

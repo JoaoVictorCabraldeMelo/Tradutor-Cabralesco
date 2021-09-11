@@ -39,7 +39,7 @@
 # define YY_YY_SINTAX_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -83,7 +83,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "./src/sintax.y"
+#line 17 "./src/sintax.y"
 
   struct lex {
     int linha;
@@ -94,8 +94,7 @@ union YYSTYPE
 
   struct node *producao;
 
-
-#line 99 "sintax.tab.h"
+#line 98 "sintax.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

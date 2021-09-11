@@ -1,17 +1,16 @@
-int main( a + b){ 
-    int List¬¬;
-    float y;
-    float list a;
-    float k¢;
-    int ŧŧ;
+int main(){
+    int @;
+    int a;
+	
+    if(a == 5.5925){
+        writeln("VAMO Q VAMO");
+    }
+    return .30;
+}
 
-    return for();
+int newTest(int a){
+}
 
-
-
-    y = 30.29;
-    read(y);
-    a = y : a;
-
-    return 0;
+int function(int a, int b, int c) {
+    return if();
 }

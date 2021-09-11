@@ -6,6 +6,13 @@ flex: bison
 	mv lex.yy.c ./src/
 
 bison: 
-	bison ./src/sintax.y -d  -Wcounterexample
+	bison ./src/sintax.y -d  -Wcounterexample -t
 	mv sintax.tab.c ./src/
 	mv sintax.tab.h ./src/
+
+
+clean:
+	rm ./src/lex.yy.c
+	rm ./src/sintax.tab.c
+	rm ./src/sintax.tab.h
+	rm ./tradutor

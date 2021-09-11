@@ -1,11 +1,13 @@
 
-float error(){
-  float list jujuba$;
-  return jujuba$;
-}
+int main(){
+    int @;
+    a = 5;
+	
+    if(@ == 5.5925){
+        writln("VAMO Q VAMO);
+    }
 
+    int æðßđŋ©;
 
-int main () {
-  float list y  = error();
-  return 0;
+    return .30;
 }

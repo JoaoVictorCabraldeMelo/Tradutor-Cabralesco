@@ -1,35 +1,3 @@
-int list IL;
-float list FL;
-
-int show_variable(int x){
-	writeln(x);
-	return x;
-}
-
-int list read_list(int n) {
-	float i;
-	new = NIL;
-	int list new;
-	i = -435.7;
-	for (i = 0; i < n ; i = i + 1) {
-		int elem;
-		writeln("Digite o elemento da lista: ");
-		read(elem);
-		new = elem : new;
-	}
-	show_variable(i);
-	return new;
-}
-
-float succ(int i) {
-	return i+1;
-}
-
-
-int leq_10(float x) {
-	return x <= 10;
-}
-
 int main() {
 
 	writeln("Digite os número de elementos da lista: ");

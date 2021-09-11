@@ -1,7 +1,13 @@
-int main() {
-  int 42jujuba;
+int main(){ 
+    int List¬¬;
+    float y;
+    float list a;
+    float k¢;
+    int ŧŧ;
 
-  42jujuba = 42;
+    y = 30.29;
+    read(y);
+    a = y : a;
 
-  return(0);
+    return 0;
 }

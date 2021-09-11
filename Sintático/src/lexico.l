@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "sintax.tab.h"
-int lines = 0;
-int columns = 0;
+#include "../lib/colors.h"
+int lines = 1;
+int columns = 1;
 int errors = 0;
 %}
 
@@ -305,7 +306,7 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 
 . {
   errors++;
-  printf("Error: %s \n Unidentified Lexeme at line: %d and column: %d\n", yytext, lines, columns);
+  printf( BHRED "lexycal error: %s \n"  "Unidentified Lexeme at line: %d and column: %d\n" RESET, yytext, lines, columns);
 }
 
 %%
