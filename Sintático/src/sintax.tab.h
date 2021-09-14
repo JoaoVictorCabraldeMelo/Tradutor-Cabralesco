@@ -74,7 +74,8 @@ extern int yydebug;
     AND = 275,                     /* AND  */
     OR = 276,                      /* OR  */
     MUL_DIV = 277,                 /* MUL_DIV  */
-    SUB_ADD = 278                  /* SUB_ADD  */
+    SUB_ADD = 278,                 /* SUB_ADD  */
+    LEXICAL_ERROR = 279            /* LEXICAL_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -83,7 +84,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "./src/sintax.y"
+#line 23 "./src/sintax.y"
 
   struct lex {
     int linha;
@@ -92,9 +93,9 @@ union YYSTYPE
     char valor[1000];
   } terminal;
 
-  struct node *producao;
+  Node *producao;
 
-#line 98 "sintax.tab.h"
+#line 99 "sintax.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

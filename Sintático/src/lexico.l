@@ -4,11 +4,13 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "../lib/arvore.h"
 #include "sintax.tab.h"
 #include "../lib/colors.h"
 int lines = 1;
 int columns = 1;
 int errors = 0;
+int escopo = 0;
 %}
 
 ID [A-Za-z_]+[A-Za-z0-9_]*
@@ -92,6 +94,7 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   yylval.terminal.linha = lines;
   columns += yyleng;
   yylval.terminal.coluna = columns;
+  escopo++;
   return '{';
 }
 
@@ -100,6 +103,7 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   yylval.terminal.linha = lines;
   columns += yyleng;
   yylval.terminal.coluna = columns;
+  escopo--;
   return '}';
 }
 
@@ -301,12 +305,14 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   yylval.terminal.linha = lines;
   columns += yyleng;
   yylval.terminal.coluna = columns;
+  yylval.terminal.escopo = escopo;
   return ID;
 }
 
 . {
   errors++;
   printf( BHRED "lexycal error: %s \n"  "Unidentified Lexeme at line: %d and column: %d\n" RESET, yytext, lines, columns);
+  return LEXICAL_ERROR;
 }
 
 %%
