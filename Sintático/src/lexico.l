@@ -4,9 +4,10 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "../lib/arvore.h"
-#include "sintax.tab.h"
-#include "../lib/colors.h"
+#include "arvore.h"
+#include "tabela.h"
+#include "syntax.tab.h"
+#include "colors.h"
 int lines = 1;
 int columns = 1;
 int errors = 0;
@@ -50,117 +51,140 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 
 %%
 "+"|"-" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return SUB_ADD;
 }
 
 "*"|"/" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return MUL_DIV;
 }
 
 "||" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return OR;
 }
 
 "&&" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return AND;
 }
 
 ">"|">="|"<"|"<="|"=="|"!=" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return REL_OP;
 }
 
 "{" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
   escopo++;
+  coloca_folha(yylval.terminal);
   return '{';
 }
 
 "}" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   escopo--;
   return '}';
 }
 
 "(" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return '(';
 }
 
 ")" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return ')';
 }
 
 ";" {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return ';';
 }
 
 "," {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines; 
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines; 
   columns += yyleng; 
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ',';
 }
 
 
 \? {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '?';
 }
 
 \! {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '!';
 }
 
 \% {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '%';
 }
 
@@ -179,133 +203,164 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 }
 
 {STRING} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return STRING;
 }
 
 {DIGIT}*\.{DIGIT}+(E[+|-]?{DIGIT}+)? {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FLOAT;
 }
 
 {DIGIT}+ {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INT;
 }
 
 
 {LISTTYPE} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return LISTTYPE;
 }
 
 {TYPE} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return TYPE;
 }
 
 {NULL} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return NIL;
 }
 
 {ASSIGN} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ASSIGN;
 }
 
 {IF} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return IF;
 }
 
 {ELSE} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ELSE;
 }
 
 {FOR} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FOR;
 }
 
 {RETURN} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return RETURN;
 }
 
 {OUTPUT} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return OUTPUT;
 }
 
 {INPUT} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INPUT;
 }
 
 {INFIX} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INFIX;
 }
 
 {FUNCTION} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FUNCTION;
 }
 
 
 {ID} {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
-  yylval.terminal.escopo = escopo;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ID;
 }
 

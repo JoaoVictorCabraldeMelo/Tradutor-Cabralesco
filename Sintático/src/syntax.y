@@ -2,25 +2,29 @@
 %define lr.type canonical-lr 
 %define parse.error verbose
 
+
+
 %{
-
-
   #include <stdio.h>
   #include <string.h>
-  #include "../lib/arvore.h"
-  #include "../lib/tabela.h"
-  #include "../lib/colors.h"
+  #include "arvore.h"
+  #include "tabela.h"
+  #include "colors.h"
+
   #define eh "Eh funcao"
   #define nao_eh "Nao eh funcao" 
+
+
   extern FILE *yyin;
   void yyerror(char const *s);
-  extern int yylex(void);
-  extern int yylex_destroy(void);
+  extern int yylex();
+  extern int yylex_destroy();
+
   int error = 0;
-  Node *raiz;
 %}
 
 %union {
+  Folha *terminal;
   Node *producao;
 }
 
@@ -94,79 +98,71 @@
 
 program : 
   paramList {
-    $$ = aloca_no("program");
-    $$->filhos[0] = $1;
-    raiz = $$;
+    // $$ = aloca_no("program");
+    // $$->filhos[0] = $1;
+    // raiz = $$;
   }
 
 paramList: 
   paramList param {
-    $$ = aloca_no("paramList");
-    $$->filhos[0] = $1;
-    $$->filhos[1] = $2;
+    // $$ = aloca_no("paramList");
+    // $$->filhos[0] = $1;
+    // $$->filhos[1] = $2;
   } 
   | param {
-    $$ = $1;
+    // $$ = $1;
   }
 
 param:
   variableParam {
-    $$ = $1;
+    // $$ = $1;
   }
   | functionParam {
-    $$ = $1;
+    // $$ = $1;
   }
 
 variableParam: 
   TYPE LISTTYPE ID ';' {
     Simbolo sim;
     
-    char *tipo = $1.valor;
-    strcat(tipo, $2.valor);
-    sim.linha = $3.linha;
-    sim.coluna = $3.coluna;
-    sim.escopo = $3.escopo;
+    char *tipo = $1->valor;
+    strcat(tipo, $2->valor);
+    sim.linha = $3->linha;
+    sim.coluna = $3->coluna;
+    sim.escopo = $3->escopo;
     sim.tipo = tipo;
-    sim.value = $3.valor;
+    sim.value = $3->valor;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("variableParam");
-    $$->filhos[0] = aloca_no();
-    $$->filhos[1] = aloca_no();
-    $$->filhos[2] = aloca_no();
-
-    coloca_terminal($$->filhos[0], $1);
-    coloca_terminal($$->filhos[1], $2);
-    coloca_terminal($$->filhos[2], $3);
-
+    // $$ = aloca_no("variableParam");
+    // $$->filhos[0] = aloca_no("");
+    // $$->filhos[1] = aloca_no("");
+    // $$->filhos[2] = aloca_no("");
   }
   | TYPE ID ';' {
     Simbolo sim;
 
-    sim.linha = $2.linha;
-    sim.coluna = $2.coluna;
-    sim.escopo = $3.escopo;
-    sim.tipo = $1.valor;
-    sim.value = $2.valor;
+    sim.linha = $2->linha;
+    sim.coluna = $2->coluna;
+    sim.escopo = $3->escopo;
+    sim.tipo = $1->valor;
+    sim.value = $2->valor;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("variableParam");
-    $$->filhos[0] = aloca_no();
-    $$->filhos[1] = aloca_no();
-
-    coloca_terminal($$->filhos[0], $1);
-    coloca_terminal($$->filhos[1], $2);
+    // $$ = aloca_no("variableParam");
+    // $$->filhos[0] = aloca_no("");
+    // $$->filhos[1] = aloca_no("");
   }
   | TYPE LISTTYPE LEXICAL_ERROR {
-    $$ = NULL;
+    // $$ = NULL;
     yyerrok;
   }
   | TYPE LEXICAL_ERROR ';' {
-    $$ = NULL;
+    // $$ = NULL;
     yyerrok;
   }
 
@@ -174,283 +170,239 @@ functionParam:
   TYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
 
-    sim.linha = $2.linha;
-    sim.coluna = $2.coluna;
-    sim.escopo = $2.escopo;
-    sim.tipo = $1.valor;
-    sim.value = $2.valor;
+    sim.linha = $2->linha;
+    sim.coluna = $2->coluna;
+    sim.escopo = $2->escopo;
+    sim.tipo = $1->valor;
+    sim.value = $2->valor;
     sim.tipo_funcao = eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParam");
-    $$->filhos[0] = aloca_no();
-    $$->filhos[1] = aloca_no();
-    $$->filhos[2] = $4;
-    $$->filhos[3] = $6;
+    // $$ = aloca_no("functionParam");
+    // $$->filhos[0] = aloca_no("");
+    // $$->filhos[1] = aloca_no("");
+    // $$->filhos[2] = $4;
+    // $$->filhos[3] = $6;
 
-    coloca_terminal($$->filhos[0], $1);
-    coloca_terminal($$->filhos[1], $2);
     
   }
   | TYPE LISTTYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
 
-    char *tipo = $1.valor;
-    strcat(tipo,$2.valor);
-    sim.linha = $3.linha;
-    sim.coluna = $3.coluna;
-    sim.escopo = $3.escopo;
+    char *tipo = $1->valor;
+    strcat(tipo,$2->valor);
+    sim.linha = $3->linha;
+    sim.coluna = $3->coluna;
+    sim.escopo = $3->escopo;
     sim.tipo = tipo;
     sim.tipo_funcao = eh;
-    sim.value = $3.valor;
+    sim.value = $3->valor;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParam");
-    $$->filhos[0] = aloca_no();
-    $$->filhos[1] = aloca_no();
-    $$->filhos[2] = aloca_no();
-    $$->filhos[3] = $5;
-    $$->filhos[4] = $7;
-
-
-    coloca_terminal($$->filhos[0], $1);
-    coloca_terminal($$->filho[1], $2);
-    coloca_terminal($$->filho[2], $3);
+    // $$ = aloca_no("functionParam");
+    // $$->filhos[0] = aloca_no("");
+    // $$->filhos[1] = aloca_no("");
+    // $$->filhos[2] = aloca_no("");
+    // $$->filhos[3] = $5;
+    // $$->filhos[4] = $7;
 
   }
 
 functionParams:
   functionParamsList {
-    $$ = $1;
+    // $$ = $1;
   }
   | %empty {
-    $$ = NULL;
+    // $$ = NULL;
   }
 
 functionParamsList:
   functionParamsList ',' TYPE ID {
     Simbolo sim;
 
-    sim.linha = $4.linha;
-    sim.coluna = $4.coluna;
-    sim.escopo = $4.escopo;
-    sim.value = $4.valor;
-    sim.tipo = $3.valor;
+    sim.linha = $4->linha;
+    sim.coluna = $4->coluna;
+    sim.escopo = $4->escopo;
+    sim.value = $4->valor;
+    sim.tipo = $3->valor;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-    $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no();
-    $$->filhos[2] = aloca_no();
+    // $$ = aloca_no("functionParamsList");
+    // $$->filhos[0] = $1;
+    // $$->filhos[1] = aloca_no("");
+    // $$->filhos[2] = aloca_no("");
 
-    coloca_terminal($$->filhos[1], $3);
-    coloca_terminal($$->filhos[2], $4);
-    
   }
   | functionParamsList ',' TYPE LISTTYPE ID {
     Simbolo sim;
 
-    char *tipo = $3.valor;
-    strcat(tipo, $4.valor);
-    sim.linha = $5.linha;
-    sim.coluna = $5.coluna;
-    sim.escopo = $5.escopo;
-    sim.value = $5.valor;
+    char *tipo = $3->valor;
+    strcat(tipo, $4->valor);
+    sim.linha = $5->linha;
+    sim.coluna = $5->coluna;
+    sim.escopo = $5->escopo;
+    sim.value = $5->valor;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-    $$->filhos[0] = $1;
-
-    coloca_terminal($$, sim);
+    // $$ = aloca_no("functionParamsList");
+    // $$->filhos[0] = $1;
 
   }
   | TYPE ID {
     Simbolo sim;
 
-    sim.linha = $2.linha;
-    sim.coluna = $2.coluna;
-    sim.escopo = $2.escopo;
-    sim.value = $2.valor;
-    sim.tipo = $1.valor;
+    sim.linha = $2->linha;
+    sim.coluna = $2->coluna;
+    sim.escopo = $2->escopo;
+    sim.value = $2->valor;
+    sim.tipo = $1->valor;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-    
-    coloca_terminal($$, sim);
+    // $$ = aloca_no("functionParamsList");
 
   }
   | TYPE LISTTYPE ID {
     Simbolo sim;
 
-    char* tipo = $1.valor;
-    strcat(tipo, $2.valor); 
-    sim.linha = $3.linha;
-    sim.coluna = $3.coluna;
-    sim.escopo = $3.escopo;
-    sim.value = $3.valor;
+    char* tipo = $1->valor;
+    strcat(tipo, $2->valor); 
+    sim.linha = $3->linha;
+    sim.coluna = $3->coluna;
+    sim.escopo = $3->escopo;
+    sim.value = $3->valor;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-
-    coloca_terminal($$, sim);
+    // $$ = aloca_no("functionParamsList");
   }
 
 call:
   ID '(' argList ')' {
     
-    $$ = aloca_no("call");
+    // $$ = aloca_no("call");
 
-    $$->filhos[0] = $3;
-
-    Simbolo sim;
-
-    sim.escopo = $1.escopo;
-    sim.linha = $1.linha;
-    sim.coluna = $1.coluna;
-    sim.value = $1.valor;
-
-    coloca_terminal($$, sim);
+    // $$->filhos[0] = $3;
   }
 
 argList:
   argList ',' ID {
-    $$ = aloca_no("argList");
+    // $$ = aloca_no("argList");
     
-    $$->filhos[0] = $1;
-
-    Simbolo sim;
-
-    sim.escopo = $3.escopo;
-    sim.linha = $3.linha;
-    sim.coluna = $3.coluna;
-    sim.value = $3.valor;
-    
-    coloca_terminal($$, sim);
-
+    // $$->filhos[0] = $1;
   }
   | ID {
-    $$ = aloca_no("argList");
-    coloca_terminal($$, sim);
+    // $$ = aloca_no("argList");
   }
   | %empty {
-    $$ = NULL;
+    // $$ = NULL;
   }
 
 stmList:
   stmList stmt {
-    $$ = aloca_no("stmList");
-    $$->filhos[0] = $1;
-    $$->filhos[1] = $2;
+    // $$ = aloca_no("stmList");
+    // $$->filhos[0] = $1;
+    // $$->filhos[1] = $2;
   }
   | stmt {
-    $$ = $1;
+    // $$ = $1;
   }
 
 stmt:
   expStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | compoundStatement {
-    $$ = $1;
+    // $$ = $1;
   } 
   | ifStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | forStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | returnStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | inputStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | outputStatement {
-    $$ = $1;
+    // $$ = $1;
   }
   | variableParam {
-    $$ = $1;
+    // $$ = $1;
   }
   
 expStatement:
   expression ';' {
-    $$ = $1;
+    // $$ = $1;
   }
 
 
 compoundStatement:
   '{' stmList '}' {
-    $$ = $2;
+    // $$ = $2;
   }
   | '{' '}' {
-    $$ = NULL;
+    // $$ = NULL;
   }
 
 
 ifStatement:
   IF '(' expression ')' stmt {
-    $$ = aloca_no("ifStatement");
-    $$->filhos[0] = $3;
-    $$->filhos[1] = $5;
+    // $$ = aloca_no("ifStatement");
+    // $$->filhos[0] = $3;
+    // $$->filhos[1] = $5;
   }
   | IF '(' expression ')' stmt ELSE stmt {
-    $$ = aloca_no(IF);
-    $$->filhos[0] = $3;
-    $$->filhos[1] = $5;
-    $$->filhos[2] = $7;
+    // $$ = aloca_no("ifStatement");
+    // $$->filhos[0] = $3;
+    // $$->filhos[1] = $5;
+    // $$->filhos[2] = $7;
   }
 
 forStatement:
   FOR '(' expStatement expStatement expression ')' stmt {
-    $$ = aloca_no(FOR);
-    $$->filhos[0] = $3;
-    $$->filhos[1] = $4;
-    $$->filhos[2] = $5;
-    $$->filhos[3] = $7;
+    // $$ = aloca_no("forStatement");
+    // $$->filhos[0] = $3;
+    // $$->filhos[1] = $4;
+    // $$->filhos[2] = $5;
+    // $$->filhos[3] = $7;
   }
 
 returnStatement:
   RETURN expression ';' {
-    $$ = aloca_no("returnStatement");
-    $$->filhos[0] = $2;
+    // $$ = aloca_no("returnStatement");
+    // $$->filhos[0] = $2;
   }
 
 inputStatement:
   INPUT '(' ID ')' ';' {
-    $$ = aloca_no("inputStatement");
-
-    Simbolo sim;
-
-    sim.escopo = $3.escopo;
-    sim.linha = $3.linha;
-    sim.coluna = $3.coluna;
-    sim.value = $3.valor;
-
-    coloca_terminal($$, sim);
+    // $$ = aloca_no("inputStatement");
+  
   }
 
 outputStatement:
   OUTPUT '(' term ')' ';' {
-    $$ = aloca_no("outputStatement");
-    $$->filhos[0] = $3;
+    // $$ = aloca_no("outputStatement");
+    // $$->filhos[0] = $3;
   }
 
 expression:
   ID ASSIGN expression  {
-    $$ = aloca_no("expression");
-    $$->filho[0] = $3;
+    // $$ = aloca_no("expression");
+    // $$->filhos[0] = $3;
 
   }
   | orExpression {
@@ -544,9 +496,9 @@ void yyerror(const char *s){
   error++;
   printf(BHYEL "%s\n" RESET, s);
   printf(BHYEL "Syntax Erros: %d\n" RESET, error);
-  printf(BHYEL "Linha: %d\n" RESET, yylval.terminal.linha);
-  printf(BHYEL "Coluna: %d\n" RESET, yylval.terminal.coluna);
-  printf(BHYEL "Valor: %s\n" RESET, yylval.terminal.valor);
+  printf(BHYEL "Linha: %d\n" RESET, yylval.terminal->linha);
+  printf(BHYEL "Coluna: %d\n" RESET, yylval.terminal->coluna);
+  printf(BHYEL "Valor: %s\n" RESET, yylval.terminal->valor);
 }
 
 
@@ -571,9 +523,11 @@ int main(int argc, char **argv) {
 
   libera_tabela();
 
-  mostra_arvore(raiz);
+  // mostra_arvore(raiz);
 
-  libera_arvore(raiz);
+  // libera_arvore(raiz);
+
+  libera_folhas();
 
   if(argc > 1){
     fclose(fp);

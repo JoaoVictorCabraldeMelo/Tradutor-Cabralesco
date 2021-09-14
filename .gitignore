@@ -5,3 +5,8 @@ Exercicio/
 *.zip 
 
 a.out
+
+*.o 
+
+logfile.out
+

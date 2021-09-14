@@ -1,6 +1,7 @@
 #ifndef TABELA_H
 #define TABELA_H
 
+#include "arvore.h"
 typedef struct Simbolo
 {
   int linha;

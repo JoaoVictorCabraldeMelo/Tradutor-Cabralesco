@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-Simbolo* first = NULL;
+Simbolo *first = NULL;
 
-Simbolo* last = NULL;
+Simbolo *last = NULL;
 
 void coloca_simbolo(Simbolo simbolo)
 {
@@ -66,3 +66,5 @@ void mostra_tabela()
   else
     printf("Nao ha lista de simbolos para mostrar!!\n");
 }
+
+

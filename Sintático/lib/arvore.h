@@ -1,35 +1,44 @@
 #ifndef ARVORE_H
 #define ARVORE_H
 
-#include "./tabela.h"
-
 typedef struct Node Node;
-typedef struct lex terminal;
+typedef struct lex Folha;
+
 struct lex
 {
   int linha;
   int escopo;
   int coluna;
   char valor[100000];
+  Folha * next;
 };
-
 struct Node
 {
   struct Node *filhos[7];
 
-  terminal *terminal_value;
+  Folha *terminal_value;
 
   char *production_value;
 };
 
 extern Node *raiz;
 
+extern Folha *primeira_folha;
+
+extern Folha *ultima_folha;
+
 Node *aloca_no(char *prod);
 
-void coloca_terminal(Node *no, terminal terminal_value);
+Folha *aloca_folha(char *terminal);
+
+void coloca_folha(Folha *folha);
+
+void coloca_terminal(Node *no, Folha *terminal_value);
 
 void mostra_arvore(Node *raiz);
 
 void libera_arvore(Node *raiz);
+
+void libera_folhas();
 
 #endif

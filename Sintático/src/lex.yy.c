@@ -1,5 +1,6 @@
+#line 1 "./src/lex.yy.c"
 
-#line 2 "lex.yy.c"
+#line 3 "./src/lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -520,15 +521,16 @@ char *yytext;
 #line 5 "./src/lexico.l"
 #include <stdio.h>
 #include <string.h>
-#include "../lib/arvore.h"
-#include "sintax.tab.h"
-#include "../lib/colors.h"
+#include "arvore.h"
+#include "tabela.h"
+#include "syntax.tab.h"
+#include "colors.h"
 int lines = 1;
 int columns = 1;
 int errors = 0;
 int escopo = 0;
-#line 530 "lex.yy.c"
-#line 531 "lex.yy.c"
+#line 532 "./src/lex.yy.c"
+#line 533 "./src/lex.yy.c"
 
 #define INITIAL 0
 
@@ -743,9 +745,9 @@ YY_DECL
 		}
 
 	{
-#line 51 "./src/lexico.l"
+#line 52 "./src/lexico.l"
 
-#line 748 "lex.yy.c"
+#line 750 "./src/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -804,163 +806,186 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 52 "./src/lexico.l"
+#line 53 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return SUB_ADD;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 60 "./src/lexico.l"
+#line 63 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return MUL_DIV;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 68 "./src/lexico.l"
+#line 73 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return OR;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 76 "./src/lexico.l"
+#line 83 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return AND;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 84 "./src/lexico.l"
+#line 93 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return REL_OP;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 92 "./src/lexico.l"
+#line 103 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
   escopo++;
+  coloca_folha(yylval.terminal);
   return '{';
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 101 "./src/lexico.l"
+#line 113 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   escopo--;
   return '}';
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 110 "./src/lexico.l"
+#line 123 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return '(';
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 118 "./src/lexico.l"
+#line 132 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return ')';
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 126 "./src/lexico.l"
+#line 141 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  coloca_folha(yylval.terminal);
   return ';';
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 134 "./src/lexico.l"
+#line 150 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines; 
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines; 
   columns += yyleng; 
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ',';
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 143 "./src/lexico.l"
+#line 161 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '?';
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 151 "./src/lexico.l"
+#line 171 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '!';
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 159 "./src/lexico.l"
+#line 181 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return '%';
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 168 "./src/lexico.l"
+#line 192 "./src/lexico.l"
 {
   columns += yyleng;
 } 
@@ -968,7 +993,7 @@ YY_RULE_SETUP
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 172 "./src/lexico.l"
+#line 196 "./src/lexico.l"
 {
   lines++;
   columns = 0;
@@ -977,7 +1002,7 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 177 "./src/lexico.l"
+#line 201 "./src/lexico.l"
 {
   columns += yyleng;
 }
@@ -985,184 +1010,215 @@ YY_RULE_SETUP
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 181 "./src/lexico.l"
+#line 205 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return STRING;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 189 "./src/lexico.l"
+#line 215 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FLOAT;
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 197 "./src/lexico.l"
+#line 225 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INT;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 206 "./src/lexico.l"
+#line 236 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return LISTTYPE;
 }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 214 "./src/lexico.l"
+#line 246 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return TYPE;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 222 "./src/lexico.l"
+#line 256 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return NIL;
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 230 "./src/lexico.l"
+#line 266 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ASSIGN;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 238 "./src/lexico.l"
+#line 276 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return IF;
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 246 "./src/lexico.l"
+#line 286 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ELSE;
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 254 "./src/lexico.l"
+#line 296 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FOR;
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 262 "./src/lexico.l"
+#line 306 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return RETURN;
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 270 "./src/lexico.l"
+#line 316 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return OUTPUT;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 278 "./src/lexico.l"
+#line 326 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INPUT;
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 286 "./src/lexico.l"
+#line 336 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return INFIX;
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 294 "./src/lexico.l"
+#line 346 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return FUNCTION;
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 303 "./src/lexico.l"
+#line 357 "./src/lexico.l"
 {
-  strcpy(yylval.terminal.valor, yytext);
-  yylval.terminal.linha = lines;
+  yylval.terminal = aloca_folha(yytext);
+  yylval.terminal->linha = lines;
   columns += yyleng;
-  yylval.terminal.coluna = columns;
-  yylval.terminal.escopo = escopo;
+  yylval.terminal->coluna = columns;
+  yylval.terminal->escopo = escopo;
+  coloca_folha(yylval.terminal);
   return ID;
 }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 312 "./src/lexico.l"
+#line 367 "./src/lexico.l"
 {
   errors++;
   printf( BHRED "lexycal error: %s \n"  "Unidentified Lexeme at line: %d and column: %d\n" RESET, yytext, lines, columns);
@@ -1171,10 +1227,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 318 "./src/lexico.l"
+#line 373 "./src/lexico.l"
 ECHO;
 	YY_BREAK
-#line 1177 "lex.yy.c"
+#line 1233 "./src/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2142,6 +2198,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 318 "./src/lexico.l"
+#line 373 "./src/lexico.l"
 
 
