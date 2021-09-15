@@ -35,7 +35,11 @@ void coloca_folha(Folha *folha);
 
 void coloca_terminal(Node *no, Folha *terminal_value);
 
-void mostra_arvore(Node *raiz);
+void mostra_arvore(Node *raiz, int nro_tabs);
+
+void mostra_header();
+
+void mostra_footer();
 
 void libera_arvore(Node *raiz);
 

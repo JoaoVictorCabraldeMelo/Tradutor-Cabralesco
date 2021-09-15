@@ -52,6 +52,8 @@ void mostra_tabela()
 {
   if (first != NULL)
   {
+    printf("|====================================| Tabela de Simbolos |====================================|");
+    printf("\n\n");
     Simbolo *tmp = first;
     printf("%-10s|%-10s|%-10s|%-30s|%-10s|%-10s\n", "Linha", "Coluna",
            "Escopo", "ID", "Tipo", "Eh Funcao");
@@ -62,6 +64,8 @@ void mostra_tabela()
 
       tmp = tmp->next;
     }
+    printf("|=============================================||=============================================|");
+    printf("\n\n");
   }
   else
     printf("Nao ha lista de simbolos para mostrar!!\n");
