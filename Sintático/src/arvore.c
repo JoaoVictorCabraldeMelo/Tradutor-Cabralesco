@@ -1,4 +1,5 @@
-#include "../lib/arvore.h"
+#include "arvore.h"
+#include "colors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,9 +57,9 @@ void mostra_arvore(Node *raiz, int nro_tabs)
     printf(" ");
   }
   if (strcmp(raiz->production_value, ""))
-    printf("%s\n", raiz->production_value);
+    printf(HMAG "%s\n" RESET, raiz->production_value);
   if (raiz->terminal_value != NULL)
-    printf("»» %s\n", raiz->terminal_value->valor);
+    printf(HMAG "»» " RESET  BYEL " %s\n" RESET, raiz->terminal_value->valor);
   for (int i = 0; i < 7; i++)
     mostra_arvore(raiz->filhos[i], nro_tabs + 1);
 }
@@ -104,13 +105,13 @@ void libera_folhas()
 
 void mostra_header() {
   printf("\n\n\n");
-  printf("###############################\n");
-  printf("## Arvore Sintatica Abstrata ##\n");
-  printf("###############################\n");
+  printf(HMAG "###############################\n" RESET);
+  printf(HMAG "## " RESET BYEL "Arvore Sintatica Abstrata " RESET HMAG "##\n");
+  printf(HMAG "###############################\n" RESET);
   printf("\n\n\n");
 }
 
 void mostra_footer() {
   printf("\n\n\n");
-  printf("================================\n");
+  printf(HMAG "================================\n" RESET);
 }

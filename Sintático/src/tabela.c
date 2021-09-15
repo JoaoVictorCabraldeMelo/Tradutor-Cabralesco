@@ -1,4 +1,5 @@
-#include "../lib/tabela.h"
+#include "tabela.h"
+#include "colors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,19 +53,20 @@ void mostra_tabela()
 {
   if (first != NULL)
   {
-    printf("|====================================| Tabela de Simbolos |====================================|");
-    printf("\n\n");
+    printf("\n\n\n");
+    printf(MAGB "|================================| Tabela de Simbolos |================================|\n" RESET);
+    printf( MAGB "%-88s\n" RESET, " ");
     Simbolo *tmp = first;
-    printf("%-10s|%-10s|%-10s|%-30s|%-10s|%-10s\n", "Linha", "Coluna",
+    printf(MAGB "%-10s" BYEL "|" RESET MAGB "%-10s" BYEL "|" RESET MAGB " %-10s" BYEL "|" RESET MAGB "%-30s" BYEL"|" RESET MAGB "%-10s" BYEL "|" RESET MAGB "%-12s\n" RESET, "Linha", "Coluna",
            "Escopo", "ID", "Tipo", "Eh Funcao");
     while (tmp != NULL)
     {
-      printf("%-10d|%-10d|%-10d|%-30s|%-10s|%-10s\n", tmp->linha, tmp->coluna,
+      printf(MAGB "%-10d" BYEL "|" RESET MAGB "%-10d" BYEL "|" RESET MAGB " %-10d" BYEL "|" RESET MAGB "%-30s" BYEL"|" RESET MAGB "%-10s" BYEL "|" RESET MAGB "%-12s\n" RESET, tmp->linha, tmp->coluna,
              tmp->escopo, tmp->value, tmp->tipo, tmp->tipo_funcao);
 
       tmp = tmp->next;
     }
-    printf("|=============================================||=============================================|");
+    printf(MAGB "|=========================================||===========================================|" RESET);
     printf("\n\n");
   }
   else

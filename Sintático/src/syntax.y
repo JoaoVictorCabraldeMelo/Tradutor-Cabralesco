@@ -12,7 +12,7 @@
   #include "colors.h"
 
   #define eh "Eh funcao"
-  #define nao_eh "Nao eh funcao" 
+  #define nao_eh "Nao eh" 
 
 
   extern FILE *yyin;
