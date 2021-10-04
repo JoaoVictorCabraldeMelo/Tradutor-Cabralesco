@@ -26,7 +26,7 @@ TYPE int|float
 
 NULL NIL
 
-STRING \"[^\"]*\"|'[^']*'
+STRING \"[^\"]*\"
 
 ASSIGN =
 
