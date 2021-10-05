@@ -12,16 +12,17 @@ int main()
   int b;
   int c;
 
-  x = a < ;
+  x = a < b;
 
   for (x = 0; x < a; x  = x + 1)
 
-  x = a *;
+  x = a * b;
 
-  if (x &&)
+  if (x && a)
   {
     int d;
-    writeln(x);
+    read();
+    write();
   }
 
   return 0;

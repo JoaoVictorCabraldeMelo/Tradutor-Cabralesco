@@ -471,6 +471,11 @@ inputStatement:
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $3);
   }
+  | INPUT '(' ')' ';' {
+    $$ = NULL;
+    yyerror("Error Input without parameter !!");
+    yyerrok;
+  }
 
 outputStatement:
   OUTPUT '(' term ')' ';' {
