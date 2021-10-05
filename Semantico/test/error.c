@@ -1,21 +1,28 @@
-int main(){
-  int @;
+int newTest(int a){
+  for(;){
+    int c;
+    int d;
+    c : d;
+  }    
+}
 
+
+
+int main(){
   int a;
 
-  if(@ == 5.5925){
+  if(a == 5.5925){
     writeln("ta certo ?");
   }
 
-  float list &;
+  float list b;
 
-  return 30;
+  a = b;
+
+  newTest(a);
+  
+  int c = a >;
+
+  return 0;
 }
 
-int newTest(int a){
-  return for();    
-}
-
-int function(int a, int b, int c) {
-  return if();
-}

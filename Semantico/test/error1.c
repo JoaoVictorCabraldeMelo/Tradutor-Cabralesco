@@ -1,16 +1,24 @@
-int main(){
 
-  float list $;
 
-  if else {
-    !$ = 1; 
+int sum(int a, int b){
+  return a + b;
+}
+
+
+int not_main(){
+
+  float list a;
+
+  if(a && ) else {
+    !a = 1; 
   };
 
-  int list #;
+  int list b;
 
-  if(^){
-    # << 1;
-  }
+  % ;
+
+
+  sum(a);
 
   writeln(#);
 

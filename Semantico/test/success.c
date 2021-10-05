@@ -5,7 +5,7 @@ int show_variable(int x){
 	writeln(x);
 	return x;
 }
-
+	
 int list read_list(int n) {
 	float i;
 	new = NIL;

@@ -231,6 +231,10 @@ functionParams:
   | %empty {
     $$ = NULL;
   }
+  | error {
+    $$ = NULL;
+    yyerrok;
+  }
 
 functionParamsList:
   functionParamsList ',' TYPE ID {
@@ -475,6 +479,16 @@ expression:
   | orExpression {
     $$ = $1;
   }
+  | ID ASSIGN {
+    $$ = NULL;
+    yyerror("Error Assign Expression  missing one parameter !!");
+    yyerrok;
+  }
+  | ASSIGN {
+    $$ = NULL;
+    yyerror("Error Assign Expression missing two parametes !!");
+    yyerrok;
+  }
 
 orExpression:
   orExpression OR andExpression {
@@ -489,6 +503,16 @@ orExpression:
   | andExpression {
     $$ = $1;
   }
+  | orExpression OR {
+    $$ = NULL;
+    yyerror("Error Or Expression missing one parameter !!");
+    yyerrok;
+  }
+  | OR {
+    $$ = NULL;
+    yyerror("Error Or Expression missing two parameters !!");
+    yyerrok;
+  }
 
 andExpression:
   andExpression AND relationalExpression {
@@ -501,6 +525,16 @@ andExpression:
   }
   | relationalExpression {
     $$ = $1;
+  }
+  | andExpression AND {
+    $$ = NULL;
+    yyerror("Error And Expression missing one parameter !!");
+    yyerrok;
+  }
+  | AND {
+    $$ = NULL;
+    yyerror("Error And Expression missing two parameters !!");
+    yyerrok;
   }
 
 relationalExpression:
@@ -515,6 +549,16 @@ relationalExpression:
   | listExpression {
     $$ = $1;
   }
+  | relationalExpression REL_OP {
+    $$ = NULL;
+    yyerror("Error Relational Expression missing one parameter !!");
+    yyerrok;
+  }
+  | REL_OP {
+    $$ = NULL;
+    yyerror("Error Relational Expression missing two parameters !!");
+    yyerrok;
+  }
 
 listExpression:
   arithmExpression listOP listExpression {
@@ -526,6 +570,7 @@ listExpression:
   | arithmExpression {
     $$ = $1;
   }
+
 
 arithmExpression:
   arithmExpression SUB_ADD arithmMulDivExpression {
@@ -552,6 +597,7 @@ arithmMulDivExpression:
   | term {
     $$ = $1;
   }
+
 
 term:
   const {
