@@ -390,7 +390,7 @@ stmt:
   | variableParam {
     $$ = $1;
   }
-  
+
 expStatement:
   expression ';' {
     $$ = $1;
@@ -437,6 +437,21 @@ forStatement:
     $$->filhos[4] = $7;
 
     coloca_terminal($$->filhos[0], $1);
+  }
+  | FOR '(' ')'  {
+    $$ = NULL;
+    yyerror("Error For Statement without expressions !!");
+    yyerrok;
+  }
+  | FOR '(' expStatement expression ')'  {
+    $$ = NULL;
+    yyerror("Error For Statement missing one expression statement !!");
+    yyerrok;
+  }
+  | FOR '(' expStatement expStatement ')' {
+    $$ = NULL;
+    yyerror("Error For Statement missing the last expression !!");
+    yyerrok;
   }
 
 returnStatement:
