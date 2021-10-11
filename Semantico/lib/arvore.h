@@ -20,6 +20,8 @@ struct Node
   Folha *terminal_value;
 
   char *production_value;
+
+  char *type;
 };
 
 extern Node *raiz;
@@ -28,7 +30,7 @@ extern Folha *primeira_folha;
 
 extern Folha *ultima_folha;
 
-Node *aloca_no(char *prod);
+Node *aloca_no(char *prod, char *type);
 
 Folha *aloca_folha(char *terminal);
 

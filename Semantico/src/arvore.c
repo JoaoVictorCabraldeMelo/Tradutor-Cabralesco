@@ -10,12 +10,13 @@ Folha *primeira_folha = NULL;
 
 Folha *ultima_folha = NULL;
 
-Node *aloca_no(char *production)
+Node *aloca_no(char *production, char *type)
 {
   Node *novo_no = (Node *)malloc(sizeof(Node));
 
   novo_no->terminal_value = NULL;
   novo_no->production_value = strdup(production);
+  novo_no->type = strdup(type);
 
   novo_no->filhos[0] = NULL;
   novo_no->filhos[1] = NULL;
@@ -75,6 +76,7 @@ void libera_arvore(Node *raiz)
   for (int i = 0; i < 7; i++)
     libera_arvore(raiz->filhos[i]);
   free(raiz->production_value);
+  free(raiz->type);
   free(raiz);
 }
 

@@ -112,6 +112,7 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   yylval.terminal->coluna = columns;
   coloca_folha(yylval.terminal);
   fecha_escopo();
+  printf("fechei\n");
   return '}';
 }
 

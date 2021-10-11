@@ -100,14 +100,14 @@
 
 program : 
   paramList {
-    $$ = aloca_no("program");
+    $$ = aloca_no("program", $1->type);
     $$->filhos[0] = $1;
     raiz = $$;
   }
 
 paramList: 
   paramList param {
-    $$ = aloca_no("paramList");
+    $$ = aloca_no("paramList", "undefined");
     $$->filhos[0] = $1;
     $$->filhos[1] = $2;
   } 
@@ -145,10 +145,10 @@ variableParam:
     $3->escopo = escopo_atual->scope_size;
     strcpy($3->tipo, tipo);
 
-    $$ = aloca_no("variableParam");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
-    $$->filhos[2] = aloca_no("");
+    $$ = aloca_no("variableParam", $3->tipo);
+    $$->filhos[0] = aloca_no("", $3->tipo);
+    $$->filhos[1] = aloca_no("", $3->tipo);
+    $$->filhos[2] = aloca_no("", $3->tipo);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -534,6 +534,7 @@ inputStatement:
     $1->escopo = -1;
     $3->escopo = escopo_atual->scope_size;
     strcpy($3->tipo, get_type_id($3->valor));
+    printf("%d\n", escopo_atual->scope_size);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $3);
