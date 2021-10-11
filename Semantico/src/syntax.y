@@ -11,6 +11,7 @@
   #include "arvore.h"
   #include "tabela.h"
   #include "colors.h"
+  #include "semantic.h"
 
   #define eh "Eh funcao"
   #define nao_eh "Nao eh" 
@@ -125,9 +126,11 @@ param:
 variableParam: 
   TYPE LISTTYPE ID ';' {
     Simbolo sim;
-    
-    char *tipo = $1->valor;
+    char tipo[10];
+
+    strcpy(tipo, $1->valor);
     strcat(tipo, $2->valor);
+
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -136,6 +139,11 @@ variableParam:
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
+
+    $1->escopo = -1;
+    $2->escopo = -1;
+    $3->escopo = escopo_atual->scope_size;
+    strcpy($3->tipo, tipo);
 
     $$ = aloca_no("variableParam");
     $$->filhos[0] = aloca_no("");
@@ -158,9 +166,15 @@ variableParam:
 
     coloca_simbolo(sim);
 
+    $2->escopo = escopo_atual->scope_size;
+
     $$ = aloca_no("variableParam");
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = aloca_no("");
+
+    $1->escopo = -1;
+    $2->escopo = escopo_atual->scope_size;
+    strcpy($2->tipo, $1->valor);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -193,15 +207,21 @@ functionParam:
     $$->filhos[2] = $4;
     $$->filhos[3] = $6;
 
+    $1->escopo = -1;
+    $2->escopo = escopo_atual->scope_size;
+    strcpy($2->tipo, $1->valor);
+
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
     
   }
   | TYPE LISTTYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
+    char tipo[10];
 
-    char *tipo = $1->valor;
+    strcpy(tipo, $1->valor);
     strcat(tipo,$2->valor);
+
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -217,6 +237,11 @@ functionParam:
     $$->filhos[2] = aloca_no("");
     $$->filhos[3] = $5;
     $$->filhos[4] = $7;
+
+    $1->escopo = -1;
+    $2->escopo = -1;
+    $3->escopo = escopo_atual->scope_size;
+    strcpy($3->tipo, tipo);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -254,15 +279,21 @@ functionParamsList:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = aloca_no("");
 
+    $3->escopo = -1;
+    $4->escopo = escopo_atual->scope_size;
+    strcpy($4->tipo, $3->valor);
+
     coloca_terminal($$->filhos[1], $3);
     coloca_terminal($$->filhos[2], $4);
 
   }
   | functionParamsList ',' TYPE LISTTYPE ID {
     Simbolo sim;
+    char tipo[10];
 
-    char *tipo = $3->valor;
+    strcpy(tipo, $3->valor);
     strcat(tipo, $4->valor);
+
     sim.linha = $5->linha;
     sim.coluna = $5->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -277,6 +308,11 @@ functionParamsList:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = aloca_no("");
     $$->filhos[3] = aloca_no("");
+
+    $3->escopo = -1;
+    $4->escopo = -1;
+    $5->escopo = escopo_atual->scope_size;
+    strcpy($5->tipo, tipo);
 
     coloca_terminal($$->filhos[1], $3);
     coloca_terminal($$->filhos[2], $4);
@@ -299,15 +335,21 @@ functionParamsList:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = aloca_no("");
 
+    $1->escopo = -1;
+    $2->escopo = escopo_atual->scope_size;
+    strcpy($2->tipo, $1->valor);
+
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
 
   }
   | TYPE LISTTYPE ID {
     Simbolo sim;
+    char tipo[10];
 
-    char* tipo = $1->valor;
-    strcat(tipo, $2->valor); 
+    strcpy(tipo, $1->valor);
+    strcat(tipo, $2->valor);
+
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -322,6 +364,11 @@ functionParamsList:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = aloca_no("");
 
+    $1->escopo = -1;
+    $2->escopo= -1;
+    $3->escopo = escopo_atual->scope_size;
+    strcpy($3->tipo, tipo);
+
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
     coloca_terminal($$->filhos[2], $3);
@@ -333,6 +380,9 @@ call:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = $3;
 
+    $1->escopo = escopo_atual->scope_size;
+    strcpy($1->tipo, get_type_id($1->valor));
+
     coloca_terminal($$->filhos[0], $1);
   }
 
@@ -343,11 +393,17 @@ argList:
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("");
 
+    $3->escopo = escopo_atual->scope_size;
+    strcpy($3->tipo, get_type_id($3->valor));
+
     coloca_terminal($$->filhos[1], $3);
   }
   | ID {
     $$ = aloca_no("argList");
     $$->filhos[0] = aloca_no("");
+
+    $1->escopo = escopo_atual->scope_size;
+    strcpy($1->tipo, get_type_id($1->valor));
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -413,6 +469,8 @@ ifStatement:
     $$->filhos[1] = $3;
     $$->filhos[2] = $5;
 
+    $1->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
   }
   | IF '(' expression ')' stmt ELSE stmt {
@@ -422,6 +480,9 @@ ifStatement:
     $$->filhos[2] = $5;
     $$->filhos[3] = aloca_no("");
     $$->filhos[4] = $7;
+
+    $1->escopo = -1;
+    $6->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[3], $6);
@@ -435,6 +496,8 @@ forStatement:
     $$->filhos[2] = $4;
     $$->filhos[3] = $5;
     $$->filhos[4] = $7;
+
+    $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -468,6 +531,10 @@ inputStatement:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = aloca_no("");
 
+    $1->escopo = -1;
+    $3->escopo = escopo_atual->scope_size;
+    strcpy($3->tipo, get_type_id($3->valor));
+
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $3);
   }
@@ -483,6 +550,8 @@ outputStatement:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] =  $3;
 
+    $1->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
   }
 
@@ -492,6 +561,11 @@ expression:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
+
+    $1->escopo = escopo_atual->scope_size;
+    strcpy($1->tipo,get_type_id($1->valor));
+
+    $2->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -517,6 +591,8 @@ orExpression:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
 
+    $2->escopo = -1;
+
     coloca_terminal($$->filhos[1], $2);
 
   }
@@ -541,6 +617,8 @@ andExpression:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
 
+    $2->escopo = -1;
+
     coloca_terminal($$->filhos[1], $2);
   }
   | relationalExpression {
@@ -563,6 +641,8 @@ relationalExpression:
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
+
+    $2->escopo = -1;
 
     coloca_terminal($$->filhos[1], $2);
   }
@@ -599,6 +679,8 @@ arithmExpression:
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
 
+    $2->escopo = -1;
+
     coloca_terminal($$->filhos[1], $2);
   }
   | arithmMulDivExpression {
@@ -611,6 +693,8 @@ arithmMulDivExpression:
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("");
     $$->filhos[2] = $3;
+
+    $2->escopo = -1;
 
     coloca_terminal($$->filhos[1], $2);
   }
@@ -628,6 +712,11 @@ term:
   }
   | ID {
     $$ = aloca_no("");
+
+    $1->escopo = escopo_atual->scope_size;
+
+    strcpy($1->tipo, get_type_id($1->valor));
+
     coloca_terminal($$, $1);
   }
   | unaryTerm {
@@ -647,12 +736,16 @@ unaryTerm:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = $2;
     
+    $1->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
   }
   | '%' term {
     $$ = aloca_no("unaryTerm");
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = $2;
+
+    $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -661,12 +754,16 @@ unaryTerm:
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = $2;
 
+    $1->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
   }
   | SUB_ADD term {
     $$ = aloca_no("unaryTerm");
     $$->filhos[0] = aloca_no("");
     $$->filhos[1] = $2;
+
+    $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -679,32 +776,47 @@ immutable:
     $$->filhos[1] = $2;
     $$->filhos[2] = aloca_no("");
 
+    $1->escopo = -1;
+    $3->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[2], $3);
   }
 
 const:
   INT {
-    $$ = aloca_no("const");
+    $$ = aloca_no("int");
     $$->filhos[0] = aloca_no("");
+
+    $1->escopo = -1;
+    strcpy($1->tipo, "int");
     
     coloca_terminal($$->filhos[0], $1);
   }
   | FLOAT {
-    $$ = aloca_no("const");
+    $$ = aloca_no("float");
     $$->filhos[0] = aloca_no("");
 
+    $1->escopo = -1;
+    strcpy($1->tipo, "float");
+    
     coloca_terminal($$->filhos[0], $1);
   }
   | STRING {
-    $$ = aloca_no("const");
+    $$ = aloca_no("string");
     $$->filhos[0] = aloca_no("");
+
+    $1->escopo = -1;
+    strcpy($1->tipo, "string");
 
     coloca_terminal($$->filhos[0], $1);
   }
   | NIL {
-    $$ = aloca_no("const");
+    $$ = aloca_no("list");
     $$->filhos[0] = aloca_no("");
+
+    $1->escopo = -1;
+    strcpy($1->tipo, "list");
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -714,11 +826,15 @@ listOP:
     $$ = aloca_no("listOp");
     $$->filhos[0] = aloca_no("");
 
+    $1->escopo = -1;
+
     coloca_terminal($$->filhos[0], $1);
   }
   | INFIX {
     $$ = aloca_no("listOp");
     $$->filhos[0] = aloca_no("");
+
+    $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }

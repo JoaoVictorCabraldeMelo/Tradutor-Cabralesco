@@ -10,6 +10,7 @@ struct lex
   int escopo;
   int coluna;
   char valor[100000];
+  char tipo[100];
   Folha * next;
 };
 struct Node

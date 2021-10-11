@@ -11,10 +11,13 @@ int newTest(int a){
 int main(){
   int a;
 
+  read(a);
+
   if(a == 5.5925){
     writeln("ta certo ?");
   }
 
+  float list $;
   float list b;
 
   a = b;

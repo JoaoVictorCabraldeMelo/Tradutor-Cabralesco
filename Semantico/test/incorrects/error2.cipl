@@ -1,0 +1,43 @@
+int a;
+
+int sum(int a, int b){
+  return a + b;
+}
+
+
+int list remove_first(int list xl){
+  return % xl;
+}
+
+int return_test(int a) {
+  float b;
+  b = a;
+  return b;
+}
+
+int main() {
+
+  int b;
+  float a;
+
+  float list c;
+
+  read(a);
+
+  read(b);
+
+  sum(a);
+
+  remove_first(b);
+
+  b = 3.1415;
+
+  c = a;
+
+  int d;
+
+  return_test(d);
+
+
+  return 0;
+}

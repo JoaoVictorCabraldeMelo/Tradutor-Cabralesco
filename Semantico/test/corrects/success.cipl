@@ -8,8 +8,8 @@ int show_variable(int x){
 	
 int list read_list(int n) {
 	float i;
-	new = NIL;
 	int list new;
+	new = NIL;
 	i = -435.7;
 	for (i = 0; i < n ; i = i + 1) {
 		int elem;

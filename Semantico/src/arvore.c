@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 Node *raiz = NULL;
 
 Folha *primeira_folha = NULL;
@@ -59,7 +58,12 @@ void mostra_arvore(Node *raiz, int nro_tabs)
   if (strcmp(raiz->production_value, ""))
     printf(HMAG "%s\n" RESET, raiz->production_value);
   if (raiz->terminal_value != NULL)
-    printf(HMAG "»» " RESET  BYEL " %s\n" RESET, raiz->terminal_value->valor);
+  {
+    if (raiz->terminal_value->escopo >= 0)
+      printf(HMAG "»» " RESET BYEL " %s com escopo: %d\n" RESET, raiz->terminal_value->valor, raiz->terminal_value->escopo);
+    else
+      printf(HMAG "»» " RESET BYEL " %s\n" RESET, raiz->terminal_value->valor);
+  }
   for (int i = 0; i < 7; i++)
     mostra_arvore(raiz->filhos[i], nro_tabs + 1);
 }
@@ -103,7 +107,8 @@ void libera_folhas()
   }
 }
 
-void mostra_header() {
+void mostra_header()
+{
   printf("\n\n\n");
   printf(HMAG "###############################\n" RESET);
   printf(HMAG "## " RESET BYEL "Arvore Sintatica Abstrata " RESET HMAG "##\n");
@@ -111,7 +116,8 @@ void mostra_header() {
   printf("\n\n\n");
 }
 
-void mostra_footer() {
+void mostra_footer()
+{
   printf("\n\n\n");
   printf(HMAG "================================\n" RESET);
 }

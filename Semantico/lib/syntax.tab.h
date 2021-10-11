@@ -84,7 +84,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 27 "./src/syntax.y"
+#line 28 "./src/syntax.y"
 
   Folha *terminal;
   Node *producao;
