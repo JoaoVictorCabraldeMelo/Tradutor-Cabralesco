@@ -32,13 +32,13 @@ ASSIGN =
 
 IF if
 
-ELSE else 
+ELSE else
 
-FOR for 
+FOR for
 
 RETURN return
 
-OUTPUT writeln|write 
+OUTPUT writeln|write
 
 INPUT read
 
@@ -112,7 +112,6 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
   yylval.terminal->coluna = columns;
   coloca_folha(yylval.terminal);
   fecha_escopo();
-  printf("fechei\n");
   return '}';
 }
 
@@ -145,8 +144,8 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 
 "," {
   yylval.terminal = aloca_folha(yytext);
-  yylval.terminal->linha = lines; 
-  columns += yyleng; 
+  yylval.terminal->linha = lines;
+  columns += yyleng;
   yylval.terminal->coluna = columns;
   coloca_folha(yylval.terminal);
   return ',';
@@ -183,7 +182,7 @@ COMMENT \/\/.*|\/\*[^\*\/]*\*\/
 
 [\t ]+ {
   columns += yyleng;
-} 
+}
 
 \n|\r {
   lines++;

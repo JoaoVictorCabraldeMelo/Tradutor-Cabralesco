@@ -13,6 +13,7 @@ struct lex
   char tipo[100];
   Folha * next;
 };
+
 struct Node
 {
   struct Node *filhos[7];

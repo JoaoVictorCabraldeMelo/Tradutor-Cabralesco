@@ -1,5 +1,5 @@
 
-%define lr.type canonical-lr 
+%define lr.type canonical-lr
 %define parse.error verbose
 
 
@@ -14,7 +14,7 @@
   #include "semantic.h"
 
   #define eh "Eh funcao"
-  #define nao_eh "Nao eh" 
+  #define nao_eh "Nao eh"
 
 
   extern FILE *yyin;
@@ -32,7 +32,7 @@
 
 
 %token <terminal> ID
-%token <terminal> FUNCTION 
+%token <terminal> FUNCTION
 %token <terminal> INFIX
 %token <terminal> INPUT
 %token <terminal> OUTPUT
@@ -59,13 +59,13 @@
 
 
 %type <producao> program
-%type <producao> paramList 
+%type <producao> paramList
 %type <producao> param
 %type <producao> variableParam
 %type <producao> functionParam
 %type <producao> functionParams
 %type <producao> functionParamsList
-%type <producao> call 
+%type <producao> call
 %type <producao> stmt
 %type <producao> expStatement
 %type <producao> compoundStatement
@@ -84,7 +84,7 @@
 %type <producao> arithmExpression
 %type <producao> arithmMulDivExpression
 %type <producao> unaryTerm
-%type <producao> term 
+%type <producao> term
 %type <producao> immutable
 %type <producao> const
 %type <producao> listOP
@@ -98,19 +98,19 @@
 
 %%
 
-program : 
+program :
   paramList {
     $$ = aloca_no("program", $1->type);
     $$->filhos[0] = $1;
     raiz = $$;
   }
 
-paramList: 
+paramList:
   paramList param {
     $$ = aloca_no("paramList", "undefined");
     $$->filhos[0] = $1;
     $$->filhos[1] = $2;
-  } 
+  }
   | param {
     $$ = $1;
   }
@@ -123,7 +123,7 @@ param:
     $$ = $1;
   }
 
-variableParam: 
+variableParam:
   TYPE LISTTYPE ID ';' {
     Simbolo sim;
     char tipo[10];
@@ -146,6 +146,7 @@ variableParam:
     strcpy($3->tipo, tipo);
 
     $$ = aloca_no("variableParam", $3->tipo);
+
     $$->filhos[0] = aloca_no("", $3->tipo);
     $$->filhos[1] = aloca_no("", $3->tipo);
     $$->filhos[2] = aloca_no("", $3->tipo);
@@ -168,9 +169,9 @@ variableParam:
 
     $2->escopo = escopo_atual->scope_size;
 
-    $$ = aloca_no("variableParam");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
+    $$ = aloca_no("variableParam", $1->valor);
+    $$->filhos[0] = aloca_no("", $1->valor);
+    $$->filhos[1] = aloca_no("", $1->valor);
 
     $1->escopo = -1;
     $2->escopo = escopo_atual->scope_size;
@@ -201,9 +202,9 @@ functionParam:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParam");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
+    $$ = aloca_no("functionParam", $1->valor);
+    $$->filhos[0] = aloca_no("", $1->valor);
+    $$->filhos[1] = aloca_no("", $1->valor);
     $$->filhos[2] = $4;
     $$->filhos[3] = $6;
 
@@ -213,7 +214,7 @@ functionParam:
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
-    
+
   }
   | TYPE LISTTYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
@@ -231,17 +232,18 @@ functionParam:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParam");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
-    $$->filhos[2] = aloca_no("");
+    strcpy($3->tipo, tipo);
+
+    $$ = aloca_no("functionParam", $3->tipo);
+    $$->filhos[0] = aloca_no("", $3->tipo);
+    $$->filhos[1] = aloca_no("", $3->tipo);
+    $$->filhos[2] = aloca_no("", $3->tipo);
     $$->filhos[3] = $5;
     $$->filhos[4] = $7;
 
     $1->escopo = -1;
     $2->escopo = -1;
     $3->escopo = escopo_atual->scope_size;
-    strcpy($3->tipo, tipo);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -274,10 +276,10 @@ functionParamsList:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
+    $$ = aloca_no("functionParamsList", "undefined");
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
-    $$->filhos[2] = aloca_no("");
+    $$->filhos[1] = aloca_no("", $3->valor);
+    $$->filhos[2] = aloca_no("", $3->valor);
 
     $3->escopo = -1;
     $4->escopo = escopo_atual->scope_size;
@@ -303,16 +305,17 @@ functionParamsList:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
+    strcpy($5->tipo, tipo);
+
+    $$ = aloca_no("functionParamsList", "undefined");
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
-    $$->filhos[2] = aloca_no("");
-    $$->filhos[3] = aloca_no("");
+    $$->filhos[1] = aloca_no("", $5->tipo);
+    $$->filhos[2] = aloca_no("", $5->tipo);
+    $$->filhos[3] = aloca_no("", $5->tipo);
 
     $3->escopo = -1;
     $4->escopo = -1;
     $5->escopo = escopo_atual->scope_size;
-    strcpy($5->tipo, tipo);
 
     coloca_terminal($$->filhos[1], $3);
     coloca_terminal($$->filhos[2], $4);
@@ -331,9 +334,9 @@ functionParamsList:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
+    $$ = aloca_no("functionParamsList", $1->valor);
+    $$->filhos[0] = aloca_no("", $1->valor);
+    $$->filhos[1] = aloca_no("", $1->valor);
 
     $1->escopo = -1;
     $2->escopo = escopo_atual->scope_size;
@@ -359,15 +362,16 @@ functionParamsList:
 
     coloca_simbolo(sim);
 
-    $$ = aloca_no("functionParamsList");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
-    $$->filhos[2] = aloca_no("");
+    strcpy($3->tipo, tipo);
+
+    $$ = aloca_no("functionParamsList", $3->tipo);
+    $$->filhos[0] = aloca_no("", $3->tipo);
+    $$->filhos[1] = aloca_no("", $3->tipo);
+    $$->filhos[2] = aloca_no("", $3->tipo);
 
     $1->escopo = -1;
     $2->escopo= -1;
     $3->escopo = escopo_atual->scope_size;
-    strcpy($3->tipo, tipo);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -375,35 +379,40 @@ functionParamsList:
   }
 
 call:
-  ID '(' argList ')' {    
-    $$ = aloca_no("call");
-    $$->filhos[0] = aloca_no("");
+  ID '(' argList ')' {
+
+    strcpy($1->tipo, get_type_id($1->valor));
+
+    $$ = aloca_no("call", $1->tipo);
+    $$->filhos[0] = aloca_no("", $1->tipo);
     $$->filhos[1] = $3;
 
     $1->escopo = escopo_atual->scope_size;
-    strcpy($1->tipo, get_type_id($1->valor));
 
     coloca_terminal($$->filhos[0], $1);
   }
 
 argList:
   argList ',' ID {
-    $$ = aloca_no("argList");
-  
+    $$ = aloca_no("argList", "undefined");
+
+    strcpy($3->tipo, get_type_id($3->valor));
+
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", $3->tipo);
 
     $3->escopo = escopo_atual->scope_size;
-    strcpy($3->tipo, get_type_id($3->valor));
 
     coloca_terminal($$->filhos[1], $3);
   }
   | ID {
-    $$ = aloca_no("argList");
-    $$->filhos[0] = aloca_no("");
+
+    strcpy($1->tipo, get_type_id($1->valor));
+
+    $$ = aloca_no("argList", $1->tipo);
+    $$->filhos[0] = aloca_no("", $1->tipo);
 
     $1->escopo = escopo_atual->scope_size;
-    strcpy($1->tipo, get_type_id($1->valor));
 
     coloca_terminal($$->filhos[0], $1);
   }
@@ -413,7 +422,7 @@ argList:
 
 stmList:
   stmList stmt {
-    $$ = aloca_no("stmList");
+    $$ = aloca_no("stmList", "undefined");
     $$->filhos[0] = $1;
     $$->filhos[1] = $2;
   }
@@ -427,7 +436,7 @@ stmt:
   }
   | compoundStatement {
     $$ = $1;
-  } 
+  }
   | ifStatement {
     $$ = $1;
   }
@@ -464,8 +473,8 @@ compoundStatement:
 
 ifStatement:
   IF '(' expression ')' stmt {
-    $$ = aloca_no("ifStatement");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("ifStatement", "undefined");
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $3;
     $$->filhos[2] = $5;
 
@@ -474,11 +483,11 @@ ifStatement:
     coloca_terminal($$->filhos[0], $1);
   }
   | IF '(' expression ')' stmt ELSE stmt {
-    $$ = aloca_no("ifStatement");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("ifStatement", "undefined");
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $3;
     $$->filhos[2] = $5;
-    $$->filhos[3] = aloca_no("");
+    $$->filhos[3] = aloca_no("", "undefined");
     $$->filhos[4] = $7;
 
     $1->escopo = -1;
@@ -490,8 +499,8 @@ ifStatement:
 
 forStatement:
   FOR '(' expStatement expStatement expression ')' stmt {
-    $$ = aloca_no("forStatement");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("forStatement", "undefined");
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $3;
     $$->filhos[2] = $4;
     $$->filhos[3] = $5;
@@ -519,22 +528,22 @@ forStatement:
 
 returnStatement:
   RETURN expression ';' {
-    $$ = aloca_no("returnStatement");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("returnStatement", $2->type);
+    $$->filhos[0] = aloca_no("", $2->type);
     $$->filhos[1] = $2;
   }
 
 inputStatement:
   INPUT '(' ID ')' ';' {
-    $$ = aloca_no("inputStatement");
+    strcpy($3->tipo, get_type_id($3->valor));
 
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
+    $$ = aloca_no("inputStatement", $3->tipo);
+
+    $$->filhos[0] = aloca_no("", $3->tipo);
+    $$->filhos[1] = aloca_no("", $3->tipo);
 
     $1->escopo = -1;
     $3->escopo = escopo_atual->scope_size;
-    strcpy($3->tipo, get_type_id($3->valor));
-    printf("%d\n", escopo_atual->scope_size);
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $3);
@@ -547,8 +556,8 @@ inputStatement:
 
 outputStatement:
   OUTPUT '(' term ')' ';' {
-    $$ = aloca_no("outputStatement");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("outputStatement", $3->type);
+    $$->filhos[0] = aloca_no("", $3->type);
     $$->filhos[1] =  $3;
 
     $1->escopo = -1;
@@ -558,13 +567,15 @@ outputStatement:
 
 expression:
   ID ASSIGN expression  {
-    $$ = aloca_no("expression");
-    $$->filhos[0] = aloca_no("");
-    $$->filhos[1] = aloca_no("");
+    strcpy($1->tipo,get_type_id($1->valor));
+
+
+    $$ = aloca_no("expression", $3->type);
+    $$->filhos[0] = aloca_no("", $1->tipo);
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $1->escopo = escopo_atual->scope_size;
-    strcpy($1->tipo,get_type_id($1->valor));
 
     $2->escopo = -1;
 
@@ -587,9 +598,9 @@ expression:
 
 orExpression:
   orExpression OR andExpression {
-    $$ = aloca_no("orExpression");
+    $$ = aloca_no("orExpression", $3->type);
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $2->escopo = -1;
@@ -613,9 +624,9 @@ orExpression:
 
 andExpression:
   andExpression AND relationalExpression {
-    $$ = aloca_no("andExpression");
+    $$ = aloca_no("andExpression", $3->type);
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $2->escopo = -1;
@@ -638,9 +649,9 @@ andExpression:
 
 relationalExpression:
   relationalExpression REL_OP listExpression {
-    $$ = aloca_no("relationalExpression");
+    $$ = aloca_no("relationalExpression", $3->type);
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $2->escopo = -1;
@@ -663,7 +674,7 @@ relationalExpression:
 
 listExpression:
   arithmExpression listOP listExpression {
-    $$ = aloca_no("listExpression");
+    $$ = aloca_no("listExpression", $1->type);
     $$->filhos[0] = $1;
     $$->filhos[1] = $2;
     $$->filhos[2] = $3;
@@ -675,9 +686,9 @@ listExpression:
 
 arithmExpression:
   arithmExpression SUB_ADD arithmMulDivExpression {
-    $$ = aloca_no("arithmExpression");
+    $$ = aloca_no("arithmExpression", $3->type);
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $2->escopo = -1;
@@ -690,9 +701,9 @@ arithmExpression:
 
 arithmMulDivExpression:
   arithmMulDivExpression MUL_DIV term {
-    $$ = aloca_no("arithmMulDivExpression");
+    $$ = aloca_no("arithmMulDivExpression", $3->type);
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("");
+    $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
     $2->escopo = -1;
@@ -712,11 +723,11 @@ term:
     $$ = $1;
   }
   | ID {
-    $$ = aloca_no("");
+    strcpy($1->tipo, get_type_id($1->valor));
+
+    $$ = aloca_no("", $1->tipo);
 
     $1->escopo = escopo_atual->scope_size;
-
-    strcpy($1->tipo, get_type_id($1->valor));
 
     coloca_terminal($$, $1);
   }
@@ -733,17 +744,17 @@ term:
 
 unaryTerm:
   '!' term {
-    $$ = aloca_no("unaryTerm");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("unaryTerm", $2->type);
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
-    
+
     $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
   | '%' term {
-    $$ = aloca_no("unaryTerm");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("unaryTerm", $2->type);
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
     $1->escopo = -1;
@@ -751,8 +762,8 @@ unaryTerm:
     coloca_terminal($$->filhos[0], $1);
   }
   | '?' term {
-    $$ = aloca_no("unaryTerm");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("unaryTerm", $2->type);
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
     $1->escopo = -1;
@@ -760,8 +771,8 @@ unaryTerm:
     coloca_terminal($$->filhos[0], $1);
   }
   | SUB_ADD term {
-    $$ = aloca_no("unaryTerm");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("unaryTerm", $2->type);
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
     $1->escopo = -1;
@@ -772,10 +783,10 @@ unaryTerm:
 
 immutable:
   '(' expression ')' {
-    $$ = aloca_no("immutable");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("immutable", $2->type);
+    $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
-    $$->filhos[2] = aloca_no("");
+    $$->filhos[2] = aloca_no("", "undefined");
 
     $1->escopo = -1;
     $3->escopo = -1;
@@ -786,26 +797,26 @@ immutable:
 
 const:
   INT {
-    $$ = aloca_no("int");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("int", "int");
+    $$->filhos[0] = aloca_no("", "int");
 
     $1->escopo = -1;
     strcpy($1->tipo, "int");
-    
+
     coloca_terminal($$->filhos[0], $1);
   }
   | FLOAT {
-    $$ = aloca_no("float");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("float", "float");
+    $$->filhos[0] = aloca_no("", "float");
 
     $1->escopo = -1;
     strcpy($1->tipo, "float");
-    
+
     coloca_terminal($$->filhos[0], $1);
   }
   | STRING {
-    $$ = aloca_no("string");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("string", "string");
+    $$->filhos[0] = aloca_no("", "string");
 
     $1->escopo = -1;
     strcpy($1->tipo, "string");
@@ -813,8 +824,8 @@ const:
     coloca_terminal($$->filhos[0], $1);
   }
   | NIL {
-    $$ = aloca_no("list");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("list", "list");
+    $$->filhos[0] = aloca_no("", "list");
 
     $1->escopo = -1;
     strcpy($1->tipo, "list");
@@ -824,22 +835,22 @@ const:
 
 listOP:
   FUNCTION {
-    $$ = aloca_no("listOp");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("listOp", "undefined");
+    $$->filhos[0] = aloca_no("", "undefined");
 
     $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
   | INFIX {
-    $$ = aloca_no("listOp");
-    $$->filhos[0] = aloca_no("");
+    $$ = aloca_no("listOp", "undefined");
+    $$->filhos[0] = aloca_no("", "undefined");
 
     $1->escopo = -1;
 
     coloca_terminal($$->filhos[0], $1);
   }
-  
+
 %%
 
 void yyerror(const char *s){
@@ -895,4 +906,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-

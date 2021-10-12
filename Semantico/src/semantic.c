@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "tabela.h"
 #include "arvore.h"
+
+int erros_semanticos = 0;
 
 char *get_type_id(char *id)
 {
@@ -20,19 +23,29 @@ char *get_type_id(char *id)
       tmp = tmp->next;
     }
 
-    if (tmp == NULL)
+    if (tmp == NULL){
+      erros_semanticos++;
       return nao_foi_declarado;
+    }
     else
       return tmp->tipo;
   }
 
+  erros_semanticos++;
   return nao_foi_declarado;
 }
 
-void show_type(Node *expression)
+void sum_types(Node *expressionA, Node *expressionB)
 {
-  if (expression != NULL && expression->terminal_value != NULL)
+
+  if(
+      (strcmp(expressionA->type, "int") == 0 || strcmp(expressionA->type, "float")) &&
+      (strcmp(expressionB->type, "int") == 0 || strcmp(expressionB->type, "float") == 0)
+    )
   {
-    printf("%s\n", expression->terminal_value->tipo);
+    printf("Do conversion !!");
+  }else{
+    erros_semanticos++;
   }
+
 }

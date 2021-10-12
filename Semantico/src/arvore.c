@@ -56,8 +56,8 @@ void mostra_arvore(Node *raiz, int nro_tabs)
   {
     printf(" ");
   }
-  if (strcmp(raiz->production_value, ""))
-    printf(HMAG "%s\n" RESET, raiz->production_value);
+  if (strcmp(raiz->production_value, "") != 0)
+    printf(HMAG "%s (%s)\n" RESET, raiz->production_value, raiz->type);
   if (raiz->terminal_value != NULL)
   {
     if (raiz->terminal_value->escopo >= 0)
