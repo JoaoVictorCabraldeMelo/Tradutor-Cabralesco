@@ -210,6 +210,7 @@ functionParam:
     sim.tipo_funcao = eh;
 
     coloca_simbolo(sim);
+    verify_return_types($1->valor);
 
     $$ = aloca_no("functionParam", $1->valor);
     $$->filhos[0] = aloca_no("", $1->valor);
@@ -223,6 +224,8 @@ functionParam:
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
+
+    clear_return_list();
 
   }
   | TYPE LISTTYPE ID '(' functionParams ')' stmt {
@@ -242,6 +245,7 @@ functionParam:
     sim.value = $3->valor;
 
     coloca_simbolo(sim);
+    verify_return_types(tipo);
 
     strcpy($3->tipo, tipo);
 
@@ -260,6 +264,7 @@ functionParam:
     coloca_terminal($$->filhos[1], $2);
     coloca_terminal($$->filhos[2], $3);
 
+    clear_return_list();
   }
 
 functionParams:
@@ -407,9 +412,15 @@ call:
 
     strcpy($1->tipo, get_type_id($1->valor, $1));
 
-    printf("%d\n", nro_argumentos);
+    bool ok = verify_call(nro_argumentos, $1);
+    char* type;
 
-    $$ = aloca_no("call", $1->tipo);
+    if(ok)
+      type = $1->tipo;
+    else
+      type = "undefined";
+
+    $$ = aloca_no("call", type);
     $$->filhos[0] = aloca_no("", $1->tipo);
     $$->filhos[1] = $3;
 
@@ -560,6 +571,8 @@ forStatement:
 
 returnStatement:
   RETURN expression ';' {
+    put_return_in_list($1->linha, $1->coluna, $2->type, $2);
+
     $$ = aloca_no("returnStatement", $2->type);
     $$->filhos[0] = aloca_no("", $2->type);
     $$->filhos[1] = $2;
@@ -569,7 +582,15 @@ inputStatement:
   INPUT '(' ID ')' ';' {
     strcpy($3->tipo, get_type_id($3->valor, $3));
 
-    $$ = aloca_no("inputStatement", $3->tipo);
+    char *type = "undefined";
+
+    bool ok = verify_input($3);
+
+    if(ok)
+      $$ = aloca_no("inputStatement", $3->tipo);
+    else
+      $$ = aloca_no("inputStatement", type);
+
 
     $$->filhos[0] = aloca_no("", $3->tipo);
     $$->filhos[1] = aloca_no("", $3->tipo);
@@ -589,7 +610,17 @@ inputStatement:
 outputStatement:
   OUTPUT '(' term ')' ';' {
     $$ = aloca_no("outputStatement", $3->type);
-    $$->filhos[0] = aloca_no("", $3->type);
+
+    char *type = "undefined";
+
+    bool ok = verify_output($3);
+
+    if(ok)
+      $$->filhos[0] = aloca_no("", $3->type);
+    else
+      $$->filhos[0] = aloca_no("", type);
+
+
     $$->filhos[1] =  $3;
 
     $1->escopo = -1;
@@ -705,7 +736,7 @@ relationalExpression:
 
     char *type;
 
-    bool ok = rel_type_check($1, $3);
+    bool ok = rel_type_check($1, $2, $3);
 
     if(ok)
       type = "int";
@@ -770,7 +801,10 @@ arithmExpression:
 
 arithmMulDivExpression:
   arithmMulDivExpression MUL_DIV term {
-    $$ = aloca_no("arithmMulDivExpression", $3->type);
+
+    arithm_muldiv_type_check($1, $3);
+
+    $$ = aloca_no("arithmMulDivExpression", what_type($1, $3));
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -813,7 +847,10 @@ term:
 
 unaryTerm:
   '!' term {
-    $$ = aloca_no("unaryTerm", $2->type);
+
+    char *type = verify_unary_list($2, $1);
+
+    $$ = aloca_no("unaryTerm", type);
     $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
@@ -822,7 +859,10 @@ unaryTerm:
     coloca_terminal($$->filhos[0], $1);
   }
   | '%' term {
-    $$ = aloca_no("unaryTerm", $2->type);
+
+    char *type = verify_unary_list($2, $1);
+
+    $$ = aloca_no("unaryTerm", type);
     $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
@@ -831,7 +871,10 @@ unaryTerm:
     coloca_terminal($$->filhos[0], $1);
   }
   | '?' term {
-    $$ = aloca_no("unaryTerm", $2->type);
+
+    char *type = verify_unary_list($2, $1);
+
+    $$ = aloca_no("unaryTerm", type);
     $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
@@ -840,7 +883,10 @@ unaryTerm:
     coloca_terminal($$->filhos[0], $1);
   }
   | SUB_ADD term {
-    $$ = aloca_no("unaryTerm", $2->type);
+
+    char *type = verify_unary_list($2, $1);
+
+    $$ = aloca_no("unaryTerm", type);
     $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
 
@@ -906,7 +952,7 @@ listOP:
   FUNCTION {
     char *type;
 
-    if(strcmp($1->valor, ">>"))
+    if(strcmp($1->valor, ">>") == 0)
       type = "map";
     else
       type = "filter";
@@ -958,6 +1004,8 @@ int main(int argc, char **argv) {
   }
 
   yyparse();
+
+  verify_main();
 
   mostra_tabela();
 
