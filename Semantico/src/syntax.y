@@ -7,6 +7,8 @@
 %{
   #include <stdio.h>
   #include <string.h>
+  #include <stdbool.h>
+
   #include "escopo.h"
   #include "arvore.h"
   #include "tabela.h"
@@ -23,6 +25,7 @@
   extern int yylex_destroy();
 
   int error = 0;
+  int nro_argumentos = 0;
 %}
 
 %union {
@@ -135,6 +138,8 @@ variableParam:
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.tipo = tipo;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = false;
     sim.value = $3->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -162,6 +167,8 @@ variableParam:
     sim.coluna = $2->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.tipo = $1->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = false;
     sim.value = $2->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -196,6 +203,8 @@ functionParam:
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
     sim.escopo = escopo_atual->scope_size;
+    sim.nro_parametros = calcula_nro_parametros();
+    sim.eh_parametro = false;
     sim.tipo = $1->valor;
     sim.value = $2->valor;
     sim.tipo_funcao = eh;
@@ -226,6 +235,8 @@ functionParam:
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
+    sim.nro_parametros = calcula_nro_parametros();
+    sim.eh_parametro = false;
     sim.tipo = tipo;
     sim.tipo_funcao = eh;
     sim.value = $3->valor;
@@ -265,12 +276,15 @@ functionParams:
 
 functionParamsList:
   functionParamsList ',' TYPE ID {
+
     Simbolo sim;
 
     sim.linha = $4->linha;
     sim.coluna = $4->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = $4->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = $3->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -290,6 +304,8 @@ functionParamsList:
 
   }
   | functionParamsList ',' TYPE LISTTYPE ID {
+
+
     Simbolo sim;
     char tipo[10];
 
@@ -300,6 +316,8 @@ functionParamsList:
     sim.coluna = $5->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = $5->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
@@ -323,6 +341,8 @@ functionParamsList:
 
   }
   | TYPE ID {
+
+
     Simbolo sim;
 
     sim.linha = $2->linha;
@@ -330,6 +350,8 @@ functionParamsList:
     sim.escopo = escopo_atual->scope_size;
     sim.value = $2->valor;
     sim.tipo = $1->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
@@ -357,6 +379,8 @@ functionParamsList:
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = $3->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
@@ -381,7 +405,9 @@ functionParamsList:
 call:
   ID '(' argList ')' {
 
-    strcpy($1->tipo, get_type_id($1->valor));
+    strcpy($1->tipo, get_type_id($1->valor, $1));
+
+    printf("%d\n", nro_argumentos);
 
     $$ = aloca_no("call", $1->tipo);
     $$->filhos[0] = aloca_no("", $1->tipo);
@@ -390,13 +416,17 @@ call:
     $1->escopo = escopo_atual->scope_size;
 
     coloca_terminal($$->filhos[0], $1);
+
+    nro_argumentos = 0;
   }
 
 argList:
   argList ',' ID {
     $$ = aloca_no("argList", "undefined");
 
-    strcpy($3->tipo, get_type_id($3->valor));
+    nro_argumentos++;
+
+    strcpy($3->tipo, get_type_id($3->valor, $3));
 
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", $3->tipo);
@@ -407,7 +437,9 @@ argList:
   }
   | ID {
 
-    strcpy($1->tipo, get_type_id($1->valor));
+    nro_argumentos++;
+
+    strcpy($1->tipo, get_type_id($1->valor, $1));
 
     $$ = aloca_no("argList", $1->tipo);
     $$->filhos[0] = aloca_no("", $1->tipo);
@@ -535,7 +567,7 @@ returnStatement:
 
 inputStatement:
   INPUT '(' ID ')' ';' {
-    strcpy($3->tipo, get_type_id($3->valor));
+    strcpy($3->tipo, get_type_id($3->valor, $3));
 
     $$ = aloca_no("inputStatement", $3->tipo);
 
@@ -567,10 +599,11 @@ outputStatement:
 
 expression:
   ID ASSIGN expression  {
-    strcpy($1->tipo,get_type_id($1->valor));
+    strcpy($1->tipo,get_type_id($1->valor, $1));
 
+    assign_expression_type_check($1, $3);
 
-    $$ = aloca_no("expression", $3->type);
+    $$ = aloca_no("expression", $1->tipo);
     $$->filhos[0] = aloca_no("", $1->tipo);
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -598,7 +631,17 @@ expression:
 
 orExpression:
   orExpression OR andExpression {
-    $$ = aloca_no("orExpression", $3->type);
+
+    char *type;
+
+    bool ok = or_type_check($1, $3);
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    $$ = aloca_no("orExpression", type);
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -624,7 +667,17 @@ orExpression:
 
 andExpression:
   andExpression AND relationalExpression {
-    $$ = aloca_no("andExpression", $3->type);
+
+    char *type;
+
+    bool ok = and_type_check($1, $3);
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    $$ = aloca_no("andExpression", type);
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -649,7 +702,17 @@ andExpression:
 
 relationalExpression:
   relationalExpression REL_OP listExpression {
-    $$ = aloca_no("relationalExpression", $3->type);
+
+    char *type;
+
+    bool ok = rel_type_check($1, $3);
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    $$ = aloca_no("relationalExpression", type);
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -674,7 +737,10 @@ relationalExpression:
 
 listExpression:
   arithmExpression listOP listExpression {
-    $$ = aloca_no("listExpression", $1->type);
+
+    char *type = list_type_check($1, $2, $3);
+
+    $$ = aloca_no("listExpression", type);
     $$->filhos[0] = $1;
     $$->filhos[1] = $2;
     $$->filhos[2] = $3;
@@ -686,7 +752,10 @@ listExpression:
 
 arithmExpression:
   arithmExpression SUB_ADD arithmMulDivExpression {
-    $$ = aloca_no("arithmExpression", $3->type);
+
+    arithm_subadd_type_check($1, $3);
+
+    $$ = aloca_no("arithmExpression", what_type($1, $3));
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
@@ -723,7 +792,7 @@ term:
     $$ = $1;
   }
   | ID {
-    strcpy($1->tipo, get_type_id($1->valor));
+    strcpy($1->tipo, get_type_id($1->valor, $1));
 
     $$ = aloca_no("", $1->tipo);
 
@@ -835,7 +904,15 @@ const:
 
 listOP:
   FUNCTION {
-    $$ = aloca_no("listOp", "undefined");
+    char *type;
+
+    if(strcmp($1->valor, ">>"))
+      type = "map";
+    else
+      type = "filter";
+
+
+    $$ = aloca_no("listOp", type);
     $$->filhos[0] = aloca_no("", "undefined");
 
     $1->escopo = -1;
@@ -843,7 +920,7 @@ listOP:
     coloca_terminal($$->filhos[0], $1);
   }
   | INFIX {
-    $$ = aloca_no("listOp", "undefined");
+    $$ = aloca_no("listOp", "constructor");
     $$->filhos[0] = aloca_no("", "undefined");
 
     $1->escopo = -1;

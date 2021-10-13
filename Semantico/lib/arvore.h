@@ -49,4 +49,6 @@ void libera_arvore(Node *raiz);
 
 void libera_folhas();
 
+void put_space(int nro_tabs);
+
 #endif

@@ -1,4 +1,18 @@
+int leq_10(int x){
+  return x <= 10;
+}
+
+
 int main() {
-  int b;
-  read(b);
+  int a;
+  float  b;
+  float list c;
+
+  a = 1;
+  b = 2.14;
+
+  a:b:NIL;
+
+  return 0;
+
 }

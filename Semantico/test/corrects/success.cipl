@@ -5,7 +5,7 @@ int show_variable(int x){
 	writeln(x);
 	return x;
 }
-	
+
 int list read_list(int n) {
 	float i;
 	int list new;
@@ -37,7 +37,7 @@ int main() {
 	int n;
 	float list FL10;
 	read(n);
-	
+
 	IL  = read_list(n);
 	FL = succ >> IL;
 

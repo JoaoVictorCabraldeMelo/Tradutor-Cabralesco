@@ -71,6 +71,8 @@
 
   #include <stdio.h>
   #include <string.h>
+  #include <stdbool.h>
+
   #include "escopo.h"
   #include "arvore.h"
   #include "tabela.h"
@@ -87,8 +89,9 @@
   extern int yylex_destroy();
 
   int error = 0;
+  int nro_argumentos = 0;
 
-#line 92 "./src/syntax.tab.c"
+#line 95 "./src/syntax.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -562,15 +565,15 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   102,   102,   109,   114,   119,   122,   127,   158,   183,
-     187,   193,   219,   255,   258,   261,   267,   292,   325,   349,
-     382,   396,   408,   419,   424,   429,   434,   437,   440,   443,
-     446,   449,   452,   455,   460,   466,   469,   475,   485,   501,
-     513,   518,   523,   530,   537,   551,   558,   569,   585,   588,
-     593,   600,   611,   614,   619,   626,   636,   639,   644,   651,
-     661,   664,   669,   676,   682,   688,   698,   703,   713,   719,
-     722,   725,   734,   737,   740,   746,   755,   764,   773,   785,
-     799,   808,   817,   826,   837,   845
+       0,   105,   105,   112,   117,   122,   125,   130,   163,   190,
+     194,   200,   228,   266,   269,   272,   278,   306,   343,   371,
+     406,   424,   438,   451,   456,   461,   466,   469,   472,   475,
+     478,   481,   484,   487,   492,   498,   501,   507,   517,   533,
+     545,   550,   555,   562,   569,   583,   590,   601,   618,   621,
+     626,   633,   654,   657,   662,   669,   689,   692,   697,   704,
+     724,   727,   732,   739,   748,   754,   767,   772,   782,   788,
+     791,   794,   803,   806,   809,   815,   824,   833,   842,   854,
+     868,   877,   886,   895,   906,   922
 };
 #endif
 
@@ -2446,51 +2449,51 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: paramList  */
-#line 102 "./src/syntax.y"
+#line 105 "./src/syntax.y"
             {
     (yyval.producao) = aloca_no("program", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = (yyvsp[0].producao);
     raiz = (yyval.producao);
   }
-#line 2456 "./src/syntax.tab.c"
+#line 2459 "./src/syntax.tab.c"
     break;
 
   case 3: /* paramList: paramList param  */
-#line 109 "./src/syntax.y"
+#line 112 "./src/syntax.y"
                   {
     (yyval.producao) = aloca_no("paramList", "undefined");
     (yyval.producao)->filhos[0] = (yyvsp[-1].producao);
     (yyval.producao)->filhos[1] = (yyvsp[0].producao);
   }
-#line 2466 "./src/syntax.tab.c"
+#line 2469 "./src/syntax.tab.c"
     break;
 
   case 4: /* paramList: param  */
-#line 114 "./src/syntax.y"
+#line 117 "./src/syntax.y"
           {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 2474 "./src/syntax.tab.c"
+#line 2477 "./src/syntax.tab.c"
     break;
 
   case 5: /* param: variableParam  */
-#line 119 "./src/syntax.y"
+#line 122 "./src/syntax.y"
                 {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 2482 "./src/syntax.tab.c"
+#line 2485 "./src/syntax.tab.c"
     break;
 
   case 6: /* param: functionParam  */
-#line 122 "./src/syntax.y"
+#line 125 "./src/syntax.y"
                   {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 2490 "./src/syntax.tab.c"
+#line 2493 "./src/syntax.tab.c"
     break;
 
   case 7: /* variableParam: TYPE LISTTYPE ID ';'  */
-#line 127 "./src/syntax.y"
+#line 130 "./src/syntax.y"
                        {
     Simbolo sim;
     char tipo[10];
@@ -2502,6 +2505,8 @@ yyreduce:
     sim.coluna = (yyvsp[-1].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.tipo = tipo;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = false;
     sim.value = (yyvsp[-1].terminal)->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -2522,11 +2527,11 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[-1].terminal));
   }
-#line 2526 "./src/syntax.tab.c"
+#line 2531 "./src/syntax.tab.c"
     break;
 
   case 8: /* variableParam: TYPE ID ';'  */
-#line 158 "./src/syntax.y"
+#line 163 "./src/syntax.y"
                 {
     Simbolo sim;
 
@@ -2534,6 +2539,8 @@ yyreduce:
     sim.coluna = (yyvsp[-1].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.tipo = (yyvsp[-2].terminal)->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = false;
     sim.value = (yyvsp[-1].terminal)->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -2552,35 +2559,37 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
-#line 2556 "./src/syntax.tab.c"
+#line 2563 "./src/syntax.tab.c"
     break;
 
   case 9: /* variableParam: TYPE LISTTYPE LEXICAL_ERROR  */
-#line 183 "./src/syntax.y"
+#line 190 "./src/syntax.y"
                                 {
     (yyval.producao) = NULL;
     yyerrok;
   }
-#line 2565 "./src/syntax.tab.c"
+#line 2572 "./src/syntax.tab.c"
     break;
 
   case 10: /* variableParam: TYPE LEXICAL_ERROR ';'  */
-#line 187 "./src/syntax.y"
+#line 194 "./src/syntax.y"
                            {
     (yyval.producao) = NULL;
     yyerrok;
   }
-#line 2574 "./src/syntax.tab.c"
+#line 2581 "./src/syntax.tab.c"
     break;
 
   case 11: /* functionParam: TYPE ID '(' functionParams ')' stmt  */
-#line 193 "./src/syntax.y"
+#line 200 "./src/syntax.y"
                                       {
     Simbolo sim;
 
     sim.linha = (yyvsp[-4].terminal)->linha;
     sim.coluna = (yyvsp[-4].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
+    sim.nro_parametros = calcula_nro_parametros();
+    sim.eh_parametro = false;
     sim.tipo = (yyvsp[-5].terminal)->valor;
     sim.value = (yyvsp[-4].terminal)->valor;
     sim.tipo_funcao = eh;
@@ -2601,11 +2610,11 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-4].terminal));
 
   }
-#line 2605 "./src/syntax.tab.c"
+#line 2614 "./src/syntax.tab.c"
     break;
 
   case 12: /* functionParam: TYPE LISTTYPE ID '(' functionParams ')' stmt  */
-#line 219 "./src/syntax.y"
+#line 228 "./src/syntax.y"
                                                  {
     Simbolo sim;
     char tipo[10];
@@ -2616,6 +2625,8 @@ yyreduce:
     sim.linha = (yyvsp[-4].terminal)->linha;
     sim.coluna = (yyvsp[-4].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
+    sim.nro_parametros = calcula_nro_parametros();
+    sim.eh_parametro = false;
     sim.tipo = tipo;
     sim.tipo_funcao = eh;
     sim.value = (yyvsp[-4].terminal)->valor;
@@ -2640,43 +2651,46 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[-4].terminal));
 
   }
-#line 2644 "./src/syntax.tab.c"
+#line 2655 "./src/syntax.tab.c"
     break;
 
   case 13: /* functionParams: functionParamsList  */
-#line 255 "./src/syntax.y"
+#line 266 "./src/syntax.y"
                      {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 2652 "./src/syntax.tab.c"
+#line 2663 "./src/syntax.tab.c"
     break;
 
   case 14: /* functionParams: %empty  */
-#line 258 "./src/syntax.y"
+#line 269 "./src/syntax.y"
            {
     (yyval.producao) = NULL;
   }
-#line 2660 "./src/syntax.tab.c"
+#line 2671 "./src/syntax.tab.c"
     break;
 
   case 15: /* functionParams: error  */
-#line 261 "./src/syntax.y"
+#line 272 "./src/syntax.y"
           {
     (yyval.producao) = NULL;
     yyerrok;
   }
-#line 2669 "./src/syntax.tab.c"
+#line 2680 "./src/syntax.tab.c"
     break;
 
   case 16: /* functionParamsList: functionParamsList ',' TYPE ID  */
-#line 267 "./src/syntax.y"
+#line 278 "./src/syntax.y"
                                  {
+
     Simbolo sim;
 
     sim.linha = (yyvsp[0].terminal)->linha;
     sim.coluna = (yyvsp[0].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = (yyvsp[0].terminal)->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = (yyvsp[-1].terminal)->valor;
     sim.tipo_funcao = nao_eh;
 
@@ -2695,12 +2709,14 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[0].terminal));
 
   }
-#line 2699 "./src/syntax.tab.c"
+#line 2713 "./src/syntax.tab.c"
     break;
 
   case 17: /* functionParamsList: functionParamsList ',' TYPE LISTTYPE ID  */
-#line 292 "./src/syntax.y"
+#line 306 "./src/syntax.y"
                                             {
+
+
     Simbolo sim;
     char tipo[10];
 
@@ -2711,6 +2727,8 @@ yyreduce:
     sim.coluna = (yyvsp[0].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = (yyvsp[0].terminal)->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
@@ -2733,12 +2751,14 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[3], (yyvsp[0].terminal));
 
   }
-#line 2737 "./src/syntax.tab.c"
+#line 2755 "./src/syntax.tab.c"
     break;
 
   case 18: /* functionParamsList: TYPE ID  */
-#line 325 "./src/syntax.y"
+#line 343 "./src/syntax.y"
             {
+
+
     Simbolo sim;
 
     sim.linha = (yyvsp[0].terminal)->linha;
@@ -2746,6 +2766,8 @@ yyreduce:
     sim.escopo = escopo_atual->scope_size;
     sim.value = (yyvsp[0].terminal)->valor;
     sim.tipo = (yyvsp[-1].terminal)->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo_funcao = nao_eh;
 
     coloca_simbolo(sim);
@@ -2762,11 +2784,11 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[0].terminal));
 
   }
-#line 2766 "./src/syntax.tab.c"
+#line 2788 "./src/syntax.tab.c"
     break;
 
   case 19: /* functionParamsList: TYPE LISTTYPE ID  */
-#line 349 "./src/syntax.y"
+#line 371 "./src/syntax.y"
                      {
     Simbolo sim;
     char tipo[10];
@@ -2778,6 +2800,8 @@ yyreduce:
     sim.coluna = (yyvsp[0].terminal)->coluna;
     sim.escopo = escopo_atual->scope_size;
     sim.value = (yyvsp[0].terminal)->valor;
+    sim.nro_parametros = 0;
+    sim.eh_parametro = true;
     sim.tipo = tipo;
     sim.tipo_funcao = nao_eh;
 
@@ -2798,14 +2822,16 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[0].terminal));
   }
-#line 2802 "./src/syntax.tab.c"
+#line 2826 "./src/syntax.tab.c"
     break;
 
   case 20: /* call: ID '(' argList ')'  */
-#line 382 "./src/syntax.y"
+#line 406 "./src/syntax.y"
                      {
 
-    strcpy((yyvsp[-3].terminal)->tipo, get_type_id((yyvsp[-3].terminal)->valor));
+    strcpy((yyvsp[-3].terminal)->tipo, get_type_id((yyvsp[-3].terminal)->valor, (yyvsp[-3].terminal)));
+
+    printf("%d\n", nro_argumentos);
 
     (yyval.producao) = aloca_no("call", (yyvsp[-3].terminal)->tipo);
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[-3].terminal)->tipo);
@@ -2814,16 +2840,20 @@ yyreduce:
     (yyvsp[-3].terminal)->escopo = escopo_atual->scope_size;
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-3].terminal));
+
+    nro_argumentos = 0;
   }
-#line 2819 "./src/syntax.tab.c"
+#line 2847 "./src/syntax.tab.c"
     break;
 
   case 21: /* argList: argList ',' ID  */
-#line 396 "./src/syntax.y"
+#line 424 "./src/syntax.y"
                  {
     (yyval.producao) = aloca_no("argList", "undefined");
 
-    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor));
+    nro_argumentos++;
+
+    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor, (yyvsp[0].terminal)));
 
     (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
     (yyval.producao)->filhos[1] = aloca_no("", (yyvsp[0].terminal)->tipo);
@@ -2832,14 +2862,16 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[0].terminal));
   }
-#line 2836 "./src/syntax.tab.c"
+#line 2866 "./src/syntax.tab.c"
     break;
 
   case 22: /* argList: ID  */
-#line 408 "./src/syntax.y"
+#line 438 "./src/syntax.y"
        {
 
-    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor));
+    nro_argumentos++;
+
+    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor, (yyvsp[0].terminal)));
 
     (yyval.producao) = aloca_no("argList", (yyvsp[0].terminal)->tipo);
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[0].terminal)->tipo);
@@ -2848,125 +2880,125 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 2852 "./src/syntax.tab.c"
+#line 2884 "./src/syntax.tab.c"
     break;
 
   case 23: /* argList: %empty  */
-#line 419 "./src/syntax.y"
+#line 451 "./src/syntax.y"
            {
     (yyval.producao) = NULL;
   }
-#line 2860 "./src/syntax.tab.c"
+#line 2892 "./src/syntax.tab.c"
     break;
 
   case 24: /* stmList: stmList stmt  */
-#line 424 "./src/syntax.y"
+#line 456 "./src/syntax.y"
                {
     (yyval.producao) = aloca_no("stmList", "undefined");
     (yyval.producao)->filhos[0] = (yyvsp[-1].producao);
     (yyval.producao)->filhos[1] = (yyvsp[0].producao);
   }
-#line 2870 "./src/syntax.tab.c"
-    break;
-
-  case 25: /* stmList: stmt  */
-#line 429 "./src/syntax.y"
-         {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 2878 "./src/syntax.tab.c"
-    break;
-
-  case 26: /* stmt: expStatement  */
-#line 434 "./src/syntax.y"
-               {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 2886 "./src/syntax.tab.c"
-    break;
-
-  case 27: /* stmt: compoundStatement  */
-#line 437 "./src/syntax.y"
-                      {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 2894 "./src/syntax.tab.c"
-    break;
-
-  case 28: /* stmt: ifStatement  */
-#line 440 "./src/syntax.y"
-                {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
 #line 2902 "./src/syntax.tab.c"
     break;
 
-  case 29: /* stmt: forStatement  */
-#line 443 "./src/syntax.y"
-                 {
+  case 25: /* stmList: stmt  */
+#line 461 "./src/syntax.y"
+         {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2910 "./src/syntax.tab.c"
     break;
 
-  case 30: /* stmt: returnStatement  */
-#line 446 "./src/syntax.y"
-                    {
+  case 26: /* stmt: expStatement  */
+#line 466 "./src/syntax.y"
+               {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2918 "./src/syntax.tab.c"
     break;
 
-  case 31: /* stmt: inputStatement  */
-#line 449 "./src/syntax.y"
-                   {
+  case 27: /* stmt: compoundStatement  */
+#line 469 "./src/syntax.y"
+                      {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2926 "./src/syntax.tab.c"
     break;
 
-  case 32: /* stmt: outputStatement  */
-#line 452 "./src/syntax.y"
-                    {
+  case 28: /* stmt: ifStatement  */
+#line 472 "./src/syntax.y"
+                {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2934 "./src/syntax.tab.c"
     break;
 
-  case 33: /* stmt: variableParam  */
-#line 455 "./src/syntax.y"
-                  {
+  case 29: /* stmt: forStatement  */
+#line 475 "./src/syntax.y"
+                 {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2942 "./src/syntax.tab.c"
     break;
 
-  case 34: /* expStatement: expression ';'  */
-#line 460 "./src/syntax.y"
-                 {
-    (yyval.producao) = (yyvsp[-1].producao);
+  case 30: /* stmt: returnStatement  */
+#line 478 "./src/syntax.y"
+                    {
+    (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2950 "./src/syntax.tab.c"
     break;
 
-  case 35: /* compoundStatement: '{' stmList '}'  */
-#line 466 "./src/syntax.y"
-                  {
-    (yyval.producao) = (yyvsp[-1].producao);
+  case 31: /* stmt: inputStatement  */
+#line 481 "./src/syntax.y"
+                   {
+    (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2958 "./src/syntax.tab.c"
     break;
 
-  case 36: /* compoundStatement: '{' '}'  */
-#line 469 "./src/syntax.y"
-            {
-    (yyval.producao) = NULL;
+  case 32: /* stmt: outputStatement  */
+#line 484 "./src/syntax.y"
+                    {
+    (yyval.producao) = (yyvsp[0].producao);
   }
 #line 2966 "./src/syntax.tab.c"
     break;
 
+  case 33: /* stmt: variableParam  */
+#line 487 "./src/syntax.y"
+                  {
+    (yyval.producao) = (yyvsp[0].producao);
+  }
+#line 2974 "./src/syntax.tab.c"
+    break;
+
+  case 34: /* expStatement: expression ';'  */
+#line 492 "./src/syntax.y"
+                 {
+    (yyval.producao) = (yyvsp[-1].producao);
+  }
+#line 2982 "./src/syntax.tab.c"
+    break;
+
+  case 35: /* compoundStatement: '{' stmList '}'  */
+#line 498 "./src/syntax.y"
+                  {
+    (yyval.producao) = (yyvsp[-1].producao);
+  }
+#line 2990 "./src/syntax.tab.c"
+    break;
+
+  case 36: /* compoundStatement: '{' '}'  */
+#line 501 "./src/syntax.y"
+            {
+    (yyval.producao) = NULL;
+  }
+#line 2998 "./src/syntax.tab.c"
+    break;
+
   case 37: /* ifStatement: IF '(' expression ')' stmt  */
-#line 475 "./src/syntax.y"
+#line 507 "./src/syntax.y"
                              {
     (yyval.producao) = aloca_no("ifStatement", "undefined");
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -2977,11 +3009,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-4].terminal));
   }
-#line 2981 "./src/syntax.tab.c"
+#line 3013 "./src/syntax.tab.c"
     break;
 
   case 38: /* ifStatement: IF '(' expression ')' stmt ELSE stmt  */
-#line 485 "./src/syntax.y"
+#line 517 "./src/syntax.y"
                                          {
     (yyval.producao) = aloca_no("ifStatement", "undefined");
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -2996,11 +3028,11 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-6].terminal));
     coloca_terminal((yyval.producao)->filhos[3], (yyvsp[-1].terminal));
   }
-#line 3000 "./src/syntax.tab.c"
+#line 3032 "./src/syntax.tab.c"
     break;
 
   case 39: /* forStatement: FOR '(' expStatement expStatement expression ')' stmt  */
-#line 501 "./src/syntax.y"
+#line 533 "./src/syntax.y"
                                                         {
     (yyval.producao) = aloca_no("forStatement", "undefined");
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3013,53 +3045,53 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-6].terminal));
   }
-#line 3017 "./src/syntax.tab.c"
+#line 3049 "./src/syntax.tab.c"
     break;
 
   case 40: /* forStatement: FOR '(' ')'  */
-#line 513 "./src/syntax.y"
+#line 545 "./src/syntax.y"
                  {
     (yyval.producao) = NULL;
     yyerror("Error For Statement without expressions !!");
     yyerrok;
   }
-#line 3027 "./src/syntax.tab.c"
+#line 3059 "./src/syntax.tab.c"
     break;
 
   case 41: /* forStatement: FOR '(' expStatement expression ')'  */
-#line 518 "./src/syntax.y"
+#line 550 "./src/syntax.y"
                                          {
     (yyval.producao) = NULL;
     yyerror("Error For Statement missing one expression statement !!");
     yyerrok;
   }
-#line 3037 "./src/syntax.tab.c"
+#line 3069 "./src/syntax.tab.c"
     break;
 
   case 42: /* forStatement: FOR '(' expStatement expStatement ')'  */
-#line 523 "./src/syntax.y"
+#line 555 "./src/syntax.y"
                                           {
     (yyval.producao) = NULL;
     yyerror("Error For Statement missing the last expression !!");
     yyerrok;
   }
-#line 3047 "./src/syntax.tab.c"
+#line 3079 "./src/syntax.tab.c"
     break;
 
   case 43: /* returnStatement: RETURN expression ';'  */
-#line 530 "./src/syntax.y"
+#line 562 "./src/syntax.y"
                         {
     (yyval.producao) = aloca_no("returnStatement", (yyvsp[-1].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[-1].producao)->type);
     (yyval.producao)->filhos[1] = (yyvsp[-1].producao);
   }
-#line 3057 "./src/syntax.tab.c"
+#line 3089 "./src/syntax.tab.c"
     break;
 
   case 44: /* inputStatement: INPUT '(' ID ')' ';'  */
-#line 537 "./src/syntax.y"
+#line 569 "./src/syntax.y"
                        {
-    strcpy((yyvsp[-2].terminal)->tipo, get_type_id((yyvsp[-2].terminal)->valor));
+    strcpy((yyvsp[-2].terminal)->tipo, get_type_id((yyvsp[-2].terminal)->valor, (yyvsp[-2].terminal)));
 
     (yyval.producao) = aloca_no("inputStatement", (yyvsp[-2].terminal)->tipo);
 
@@ -3072,21 +3104,21 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-4].terminal));
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-2].terminal));
   }
-#line 3076 "./src/syntax.tab.c"
+#line 3108 "./src/syntax.tab.c"
     break;
 
   case 45: /* inputStatement: INPUT '(' ')' ';'  */
-#line 551 "./src/syntax.y"
+#line 583 "./src/syntax.y"
                       {
     (yyval.producao) = NULL;
     yyerror("Error Input without parameter !!");
     yyerrok;
   }
-#line 3086 "./src/syntax.tab.c"
+#line 3118 "./src/syntax.tab.c"
     break;
 
   case 46: /* outputStatement: OUTPUT '(' term ')' ';'  */
-#line 558 "./src/syntax.y"
+#line 590 "./src/syntax.y"
                           {
     (yyval.producao) = aloca_no("outputStatement", (yyvsp[-2].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[-2].producao)->type);
@@ -3096,16 +3128,17 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-4].terminal));
   }
-#line 3100 "./src/syntax.tab.c"
+#line 3132 "./src/syntax.tab.c"
     break;
 
   case 47: /* expression: ID ASSIGN expression  */
-#line 569 "./src/syntax.y"
+#line 601 "./src/syntax.y"
                         {
-    strcpy((yyvsp[-2].terminal)->tipo,get_type_id((yyvsp[-2].terminal)->valor));
+    strcpy((yyvsp[-2].terminal)->tipo,get_type_id((yyvsp[-2].terminal)->valor, (yyvsp[-2].terminal)));
 
+    assign_expression_type_check((yyvsp[-2].terminal), (yyvsp[0].producao));
 
-    (yyval.producao) = aloca_no("expression", (yyvsp[0].producao)->type);
+    (yyval.producao) = aloca_no("expression", (yyvsp[-2].terminal)->tipo);
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[-2].terminal)->tipo);
     (yyval.producao)->filhos[1] = aloca_no("", "undefined");
     (yyval.producao)->filhos[2] = (yyvsp[0].producao);
@@ -3117,41 +3150,51 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
-#line 3121 "./src/syntax.tab.c"
+#line 3154 "./src/syntax.tab.c"
     break;
 
   case 48: /* expression: orExpression  */
-#line 585 "./src/syntax.y"
+#line 618 "./src/syntax.y"
                  {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3129 "./src/syntax.tab.c"
+#line 3162 "./src/syntax.tab.c"
     break;
 
   case 49: /* expression: ID ASSIGN  */
-#line 588 "./src/syntax.y"
+#line 621 "./src/syntax.y"
               {
     (yyval.producao) = NULL;
     yyerror("Error Assign Expression  missing one parameter !!");
     yyerrok;
   }
-#line 3139 "./src/syntax.tab.c"
+#line 3172 "./src/syntax.tab.c"
     break;
 
   case 50: /* expression: ASSIGN  */
-#line 593 "./src/syntax.y"
+#line 626 "./src/syntax.y"
            {
     (yyval.producao) = NULL;
     yyerror("Error Assign Expression missing two parametes !!");
     yyerrok;
   }
-#line 3149 "./src/syntax.tab.c"
+#line 3182 "./src/syntax.tab.c"
     break;
 
   case 51: /* orExpression: orExpression OR andExpression  */
-#line 600 "./src/syntax.y"
+#line 633 "./src/syntax.y"
                                 {
-    (yyval.producao) = aloca_no("orExpression", (yyvsp[0].producao)->type);
+
+    char *type;
+
+    bool ok = or_type_check((yyvsp[-2].producao), (yyvsp[0].producao));
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    (yyval.producao) = aloca_no("orExpression", type);
     (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
     (yyval.producao)->filhos[1] = aloca_no("", "undefined");
     (yyval.producao)->filhos[2] = (yyvsp[0].producao);
@@ -3160,85 +3203,52 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
 
-  }
-#line 3165 "./src/syntax.tab.c"
-    break;
-
-  case 52: /* orExpression: andExpression  */
-#line 611 "./src/syntax.y"
-                  {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 3173 "./src/syntax.tab.c"
-    break;
-
-  case 53: /* orExpression: orExpression OR  */
-#line 614 "./src/syntax.y"
-                    {
-    (yyval.producao) = NULL;
-    yyerror("Error Or Expression missing one parameter !!");
-    yyerrok;
-  }
-#line 3183 "./src/syntax.tab.c"
-    break;
-
-  case 54: /* orExpression: OR  */
-#line 619 "./src/syntax.y"
-       {
-    (yyval.producao) = NULL;
-    yyerror("Error Or Expression missing two parameters !!");
-    yyerrok;
-  }
-#line 3193 "./src/syntax.tab.c"
-    break;
-
-  case 55: /* andExpression: andExpression AND relationalExpression  */
-#line 626 "./src/syntax.y"
-                                         {
-    (yyval.producao) = aloca_no("andExpression", (yyvsp[0].producao)->type);
-    (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
-    (yyval.producao)->filhos[1] = aloca_no("", "undefined");
-    (yyval.producao)->filhos[2] = (yyvsp[0].producao);
-
-    (yyvsp[-1].terminal)->escopo = -1;
-
-    coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
 #line 3208 "./src/syntax.tab.c"
     break;
 
-  case 56: /* andExpression: relationalExpression  */
-#line 636 "./src/syntax.y"
-                         {
+  case 52: /* orExpression: andExpression  */
+#line 654 "./src/syntax.y"
+                  {
     (yyval.producao) = (yyvsp[0].producao);
   }
 #line 3216 "./src/syntax.tab.c"
     break;
 
-  case 57: /* andExpression: andExpression AND  */
-#line 639 "./src/syntax.y"
-                      {
+  case 53: /* orExpression: orExpression OR  */
+#line 657 "./src/syntax.y"
+                    {
     (yyval.producao) = NULL;
-    yyerror("Error And Expression missing one parameter !!");
+    yyerror("Error Or Expression missing one parameter !!");
     yyerrok;
   }
 #line 3226 "./src/syntax.tab.c"
     break;
 
-  case 58: /* andExpression: AND  */
-#line 644 "./src/syntax.y"
-        {
+  case 54: /* orExpression: OR  */
+#line 662 "./src/syntax.y"
+       {
     (yyval.producao) = NULL;
-    yyerror("Error And Expression missing two parameters !!");
+    yyerror("Error Or Expression missing two parameters !!");
     yyerrok;
   }
 #line 3236 "./src/syntax.tab.c"
     break;
 
-  case 59: /* relationalExpression: relationalExpression REL_OP listExpression  */
-#line 651 "./src/syntax.y"
-                                             {
-    (yyval.producao) = aloca_no("relationalExpression", (yyvsp[0].producao)->type);
+  case 55: /* andExpression: andExpression AND relationalExpression  */
+#line 669 "./src/syntax.y"
+                                         {
+
+    char *type;
+
+    bool ok = and_type_check((yyvsp[-2].producao), (yyvsp[0].producao));
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    (yyval.producao) = aloca_no("andExpression", type);
     (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
     (yyval.producao)->filhos[1] = aloca_no("", "undefined");
     (yyval.producao)->filhos[2] = (yyvsp[0].producao);
@@ -3247,60 +3257,51 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
-#line 3251 "./src/syntax.tab.c"
+#line 3261 "./src/syntax.tab.c"
     break;
 
-  case 60: /* relationalExpression: listExpression  */
-#line 661 "./src/syntax.y"
-                   {
+  case 56: /* andExpression: relationalExpression  */
+#line 689 "./src/syntax.y"
+                         {
     (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 3259 "./src/syntax.tab.c"
-    break;
-
-  case 61: /* relationalExpression: relationalExpression REL_OP  */
-#line 664 "./src/syntax.y"
-                                {
-    (yyval.producao) = NULL;
-    yyerror("Error Relational Expression missing one parameter !!");
-    yyerrok;
   }
 #line 3269 "./src/syntax.tab.c"
     break;
 
-  case 62: /* relationalExpression: REL_OP  */
-#line 669 "./src/syntax.y"
-           {
+  case 57: /* andExpression: andExpression AND  */
+#line 692 "./src/syntax.y"
+                      {
     (yyval.producao) = NULL;
-    yyerror("Error Relational Expression missing two parameters !!");
+    yyerror("Error And Expression missing one parameter !!");
     yyerrok;
   }
 #line 3279 "./src/syntax.tab.c"
     break;
 
-  case 63: /* listExpression: arithmExpression listOP listExpression  */
-#line 676 "./src/syntax.y"
-                                         {
-    (yyval.producao) = aloca_no("listExpression", (yyvsp[-2].producao)->type);
-    (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
-    (yyval.producao)->filhos[1] = (yyvsp[-1].producao);
-    (yyval.producao)->filhos[2] = (yyvsp[0].producao);
+  case 58: /* andExpression: AND  */
+#line 697 "./src/syntax.y"
+        {
+    (yyval.producao) = NULL;
+    yyerror("Error And Expression missing two parameters !!");
+    yyerrok;
   }
-#line 3290 "./src/syntax.tab.c"
+#line 3289 "./src/syntax.tab.c"
     break;
 
-  case 64: /* listExpression: arithmExpression  */
-#line 682 "./src/syntax.y"
-                     {
-    (yyval.producao) = (yyvsp[0].producao);
-  }
-#line 3298 "./src/syntax.tab.c"
-    break;
+  case 59: /* relationalExpression: relationalExpression REL_OP listExpression  */
+#line 704 "./src/syntax.y"
+                                             {
 
-  case 65: /* arithmExpression: arithmExpression SUB_ADD arithmMulDivExpression  */
-#line 688 "./src/syntax.y"
-                                                  {
-    (yyval.producao) = aloca_no("arithmExpression", (yyvsp[0].producao)->type);
+    char *type;
+
+    bool ok = rel_type_check((yyvsp[-2].producao), (yyvsp[0].producao));
+
+    if(ok)
+      type = "int";
+    else
+      type = "undefined";
+
+    (yyval.producao) = aloca_no("relationalExpression", type);
     (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
     (yyval.producao)->filhos[1] = aloca_no("", "undefined");
     (yyval.producao)->filhos[2] = (yyvsp[0].producao);
@@ -3309,19 +3310,87 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
-#line 3313 "./src/syntax.tab.c"
+#line 3314 "./src/syntax.tab.c"
+    break;
+
+  case 60: /* relationalExpression: listExpression  */
+#line 724 "./src/syntax.y"
+                   {
+    (yyval.producao) = (yyvsp[0].producao);
+  }
+#line 3322 "./src/syntax.tab.c"
+    break;
+
+  case 61: /* relationalExpression: relationalExpression REL_OP  */
+#line 727 "./src/syntax.y"
+                                {
+    (yyval.producao) = NULL;
+    yyerror("Error Relational Expression missing one parameter !!");
+    yyerrok;
+  }
+#line 3332 "./src/syntax.tab.c"
+    break;
+
+  case 62: /* relationalExpression: REL_OP  */
+#line 732 "./src/syntax.y"
+           {
+    (yyval.producao) = NULL;
+    yyerror("Error Relational Expression missing two parameters !!");
+    yyerrok;
+  }
+#line 3342 "./src/syntax.tab.c"
+    break;
+
+  case 63: /* listExpression: arithmExpression listOP listExpression  */
+#line 739 "./src/syntax.y"
+                                         {
+
+    char *type = list_type_check((yyvsp[-2].producao), (yyvsp[-1].producao), (yyvsp[0].producao));
+
+    (yyval.producao) = aloca_no("listExpression", type);
+    (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
+    (yyval.producao)->filhos[1] = (yyvsp[-1].producao);
+    (yyval.producao)->filhos[2] = (yyvsp[0].producao);
+  }
+#line 3356 "./src/syntax.tab.c"
+    break;
+
+  case 64: /* listExpression: arithmExpression  */
+#line 748 "./src/syntax.y"
+                     {
+    (yyval.producao) = (yyvsp[0].producao);
+  }
+#line 3364 "./src/syntax.tab.c"
+    break;
+
+  case 65: /* arithmExpression: arithmExpression SUB_ADD arithmMulDivExpression  */
+#line 754 "./src/syntax.y"
+                                                  {
+
+    arithm_subadd_type_check((yyvsp[-2].producao), (yyvsp[0].producao));
+
+    (yyval.producao) = aloca_no("arithmExpression", what_type((yyvsp[-2].producao), (yyvsp[0].producao)));
+    (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
+    (yyval.producao)->filhos[1] = aloca_no("", "undefined");
+    (yyval.producao)->filhos[2] = (yyvsp[0].producao);
+
+    (yyvsp[-1].terminal)->escopo = -1;
+
+    coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
+  }
+#line 3382 "./src/syntax.tab.c"
     break;
 
   case 66: /* arithmExpression: arithmMulDivExpression  */
-#line 698 "./src/syntax.y"
+#line 767 "./src/syntax.y"
                            {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3321 "./src/syntax.tab.c"
+#line 3390 "./src/syntax.tab.c"
     break;
 
   case 67: /* arithmMulDivExpression: arithmMulDivExpression MUL_DIV term  */
-#line 703 "./src/syntax.y"
+#line 772 "./src/syntax.y"
                                       {
     (yyval.producao) = aloca_no("arithmMulDivExpression", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = (yyvsp[-2].producao);
@@ -3332,37 +3401,37 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
   }
-#line 3336 "./src/syntax.tab.c"
+#line 3405 "./src/syntax.tab.c"
     break;
 
   case 68: /* arithmMulDivExpression: term  */
-#line 713 "./src/syntax.y"
+#line 782 "./src/syntax.y"
          {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3344 "./src/syntax.tab.c"
+#line 3413 "./src/syntax.tab.c"
     break;
 
   case 69: /* term: const  */
-#line 719 "./src/syntax.y"
+#line 788 "./src/syntax.y"
         {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3352 "./src/syntax.tab.c"
+#line 3421 "./src/syntax.tab.c"
     break;
 
   case 70: /* term: call  */
-#line 722 "./src/syntax.y"
+#line 791 "./src/syntax.y"
          {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3360 "./src/syntax.tab.c"
+#line 3429 "./src/syntax.tab.c"
     break;
 
   case 71: /* term: ID  */
-#line 725 "./src/syntax.y"
+#line 794 "./src/syntax.y"
        {
-    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor));
+    strcpy((yyvsp[0].terminal)->tipo, get_type_id((yyvsp[0].terminal)->valor, (yyvsp[0].terminal)));
 
     (yyval.producao) = aloca_no("", (yyvsp[0].terminal)->tipo);
 
@@ -3370,36 +3439,36 @@ yyreduce:
 
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3374 "./src/syntax.tab.c"
+#line 3443 "./src/syntax.tab.c"
     break;
 
   case 72: /* term: unaryTerm  */
-#line 734 "./src/syntax.y"
+#line 803 "./src/syntax.y"
               {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3382 "./src/syntax.tab.c"
+#line 3451 "./src/syntax.tab.c"
     break;
 
   case 73: /* term: immutable  */
-#line 737 "./src/syntax.y"
+#line 806 "./src/syntax.y"
               {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3390 "./src/syntax.tab.c"
+#line 3459 "./src/syntax.tab.c"
     break;
 
   case 74: /* term: error  */
-#line 740 "./src/syntax.y"
+#line 809 "./src/syntax.y"
           {
     (yyval.producao) = NULL;
     yyerrok;
   }
-#line 3399 "./src/syntax.tab.c"
+#line 3468 "./src/syntax.tab.c"
     break;
 
   case 75: /* unaryTerm: '!' term  */
-#line 746 "./src/syntax.y"
+#line 815 "./src/syntax.y"
            {
     (yyval.producao) = aloca_no("unaryTerm", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3409,11 +3478,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3413 "./src/syntax.tab.c"
+#line 3482 "./src/syntax.tab.c"
     break;
 
   case 76: /* unaryTerm: '%' term  */
-#line 755 "./src/syntax.y"
+#line 824 "./src/syntax.y"
              {
     (yyval.producao) = aloca_no("unaryTerm", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3423,11 +3492,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3427 "./src/syntax.tab.c"
+#line 3496 "./src/syntax.tab.c"
     break;
 
   case 77: /* unaryTerm: '?' term  */
-#line 764 "./src/syntax.y"
+#line 833 "./src/syntax.y"
              {
     (yyval.producao) = aloca_no("unaryTerm", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3437,11 +3506,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3441 "./src/syntax.tab.c"
+#line 3510 "./src/syntax.tab.c"
     break;
 
   case 78: /* unaryTerm: SUB_ADD term  */
-#line 773 "./src/syntax.y"
+#line 842 "./src/syntax.y"
                  {
     (yyval.producao) = aloca_no("unaryTerm", (yyvsp[0].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3451,11 +3520,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3455 "./src/syntax.tab.c"
+#line 3524 "./src/syntax.tab.c"
     break;
 
   case 79: /* immutable: '(' expression ')'  */
-#line 785 "./src/syntax.y"
+#line 854 "./src/syntax.y"
                      {
     (yyval.producao) = aloca_no("immutable", (yyvsp[-1].producao)->type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3468,11 +3537,11 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[0].terminal));
   }
-#line 3472 "./src/syntax.tab.c"
+#line 3541 "./src/syntax.tab.c"
     break;
 
   case 80: /* const: INT  */
-#line 799 "./src/syntax.y"
+#line 868 "./src/syntax.y"
       {
     (yyval.producao) = aloca_no("int", "int");
     (yyval.producao)->filhos[0] = aloca_no("", "int");
@@ -3482,11 +3551,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3486 "./src/syntax.tab.c"
+#line 3555 "./src/syntax.tab.c"
     break;
 
   case 81: /* const: FLOAT  */
-#line 808 "./src/syntax.y"
+#line 877 "./src/syntax.y"
           {
     (yyval.producao) = aloca_no("float", "float");
     (yyval.producao)->filhos[0] = aloca_no("", "float");
@@ -3496,11 +3565,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3500 "./src/syntax.tab.c"
+#line 3569 "./src/syntax.tab.c"
     break;
 
   case 82: /* const: STRING  */
-#line 817 "./src/syntax.y"
+#line 886 "./src/syntax.y"
            {
     (yyval.producao) = aloca_no("string", "string");
     (yyval.producao)->filhos[0] = aloca_no("", "string");
@@ -3510,11 +3579,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3514 "./src/syntax.tab.c"
+#line 3583 "./src/syntax.tab.c"
     break;
 
   case 83: /* const: NIL  */
-#line 826 "./src/syntax.y"
+#line 895 "./src/syntax.y"
         {
     (yyval.producao) = aloca_no("list", "list");
     (yyval.producao)->filhos[0] = aloca_no("", "list");
@@ -3524,37 +3593,45 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3528 "./src/syntax.tab.c"
+#line 3597 "./src/syntax.tab.c"
     break;
 
   case 84: /* listOP: FUNCTION  */
-#line 837 "./src/syntax.y"
+#line 906 "./src/syntax.y"
            {
-    (yyval.producao) = aloca_no("listOp", "undefined");
+    char *type;
+
+    if(strcmp((yyvsp[0].terminal)->valor, ">>"))
+      type = "map";
+    else
+      type = "filter";
+
+
+    (yyval.producao) = aloca_no("listOp", type);
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
 
     (yyvsp[0].terminal)->escopo = -1;
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3541 "./src/syntax.tab.c"
+#line 3618 "./src/syntax.tab.c"
     break;
 
   case 85: /* listOP: INFIX  */
-#line 845 "./src/syntax.y"
+#line 922 "./src/syntax.y"
           {
-    (yyval.producao) = aloca_no("listOp", "undefined");
+    (yyval.producao) = aloca_no("listOp", "constructor");
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
 
     (yyvsp[0].terminal)->escopo = -1;
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3554 "./src/syntax.tab.c"
+#line 3631 "./src/syntax.tab.c"
     break;
 
 
-#line 3558 "./src/syntax.tab.c"
+#line 3635 "./src/syntax.tab.c"
 
       default: break;
     }
@@ -3779,7 +3856,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 854 "./src/syntax.y"
+#line 931 "./src/syntax.y"
 
 
 void yyerror(const char *s){
