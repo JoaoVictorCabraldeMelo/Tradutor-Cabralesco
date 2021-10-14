@@ -60,11 +60,13 @@ void mostra_arvore(Node *raiz, int nro_tabs)
 
   put_space(nro_tabs);
 
-  if (strcmp(raiz->production_value, "") != 0 )
-    printf(HMAG "%s (%s)\n" RESET, raiz->production_value, raiz->type);
-  else if(strcmp(raiz->type, "int_to_float") == 0 || strcmp(raiz->type, "float_to_int") == 0) {
-    printf(UYEL "(%s)\n" RESET, raiz->type);
-    put_space(nro_tabs+1);
+  if(raiz->production_value != NULL){
+    if (strcmp(raiz->production_value, "") != 0 )
+      printf(HMAG "%s (%s)\n" RESET, raiz->production_value, raiz->type);
+    else if(strcmp(raiz->type, "int_to_float") == 0 || strcmp(raiz->type, "float_to_int") == 0) {
+      printf(UYEL "(%s)\n" RESET, raiz->type);
+      put_space(nro_tabs+1);
+    }
   }
 
   if (raiz->terminal_value != NULL)

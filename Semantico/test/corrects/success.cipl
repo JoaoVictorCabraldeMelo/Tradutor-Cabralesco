@@ -2,11 +2,8 @@ int list IL;
 float list FL;
 
 int show_variable(int x){
-	float list y;
-	int list w;
 	writeln(x);
-	return w;
-	return y;
+	return x;
 }
 
 int list read_list(int n) {

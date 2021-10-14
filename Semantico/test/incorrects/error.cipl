@@ -1,9 +1,11 @@
 int newTest(int a){
-  for(;){
+  for(){
     int c;
     int d;
     c : d;
-  }    
+  }
+  int list d;
+  return d;
 }
 
 
@@ -12,6 +14,8 @@ int main(){
   int a;
 
   read(a);
+
+  float &;
 
   if(a == 5.5925){
     writeln("ta certo ?");
@@ -23,9 +27,12 @@ int main(){
   a = b;
 
   newTest(a);
-  
-  int c = a >;
+
+  c = a;
+
+  if(){
+    write(a);
+  }
 
   return 0;
 }
-

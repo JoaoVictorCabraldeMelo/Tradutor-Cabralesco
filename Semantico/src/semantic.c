@@ -24,10 +24,13 @@ void assign_type(Node *expression, char *type){
 }
 
 bool verify_type(Node *type_expression, char *type){
-  if(strcmp(type_expression->type, type) == 0)
-    return true;
-  else
-    return false;
+  if(type_expression != NULL){
+    if(strcmp(type_expression->type, type) == 0)
+      return true;
+    else
+      return false;
+  }
+  return false;
 }
 
 bool verify_type_leaf(Folha *type_id, char *type){
@@ -38,28 +41,34 @@ bool verify_type_leaf(Folha *type_id, char *type){
 }
 
 void show_semantic_error_return(Return *expression, char *especific_error) {
-  erros_semanticos++;
   printf(RED "Semantic Errors: %d\n" RESET, erros_semanticos);
-  printf(RED "Error Semantico na Linha: %d\t" RESET, expression->linha);
-  printf(RED "Coluna: %d\n" RESET, expression->coluna);
+  erros_semanticos++;
+  if(expression != NULL){
+    printf(RED "Error Semantico na Linha: %d\t" RESET, expression->linha);
+    printf(RED "Coluna: %d\n" RESET, expression->coluna);
+  }
   printf(RED "%s\n" RESET, especific_error);
 }
 
 void show_semantic_error(Node *expression, char* especific_error){
-  erros_semanticos++;
   printf(RED "Semantic Errors: %d\n" RESET, erros_semanticos);
-  if(expression->terminal_value != NULL) {
-      printf(RED "Error Semantico na Linha: %d\t" RESET, expression->terminal_value->linha);
-      printf(RED "Coluna: %d\n" RESET, expression->terminal_value->coluna);
+  if(expression != NULL){
+    if(expression->terminal_value != NULL) {
+        printf(RED "Error Semantico na Linha: %d\t" RESET, expression->terminal_value->linha);
+        printf(RED "Coluna: %d\n" RESET, expression->terminal_value->coluna);
+    }
   }
   printf(RED "%s\n" RESET, especific_error);
+  erros_semanticos++;
 }
 
 void show_semantic_error_leaf(Folha *simbol, char *especific_error){
   erros_semanticos++;
   printf(RED "Semantic Errors: %d\n" RESET, erros_semanticos);
-  printf(RED "Error Semantico na Linha: %d\t" RESET, simbol->linha);
-  printf(RED "Coluna: %d\n" RESET, simbol->coluna);
+  if(simbol != NULL){
+    printf(RED "Error Semantico na Linha: %d\t" RESET, simbol->linha);
+    printf(RED "Coluna: %d\n" RESET, simbol->coluna);
+  }
   printf(RED "%s\n" RESET, especific_error);
 }
 
@@ -67,8 +76,10 @@ void show_semantic_error_leaf(Folha *simbol, char *especific_error){
 void show_semantic_error_symbol(Simbolo *simbol, char *especific_error){
   erros_semanticos++;
   printf(RED "Semantic Erros: %d\n" RESET, erros_semanticos);
-  printf(RED "Error Semantico na Linha: %d\t" RESET, simbol->linha);
-  printf(RED "Error Semantico na Coluna: %d\n" RESET, simbol->coluna);
+  if(simbol != NULL){
+    printf(RED "Error Semantico na Linha: %d\t" RESET, simbol->linha);
+    printf(RED "Error Semantico na Coluna: %d\n" RESET, simbol->coluna);
+  }
   printf(RED "%s\n" RESET, especific_error);
 }
 
@@ -82,8 +93,10 @@ void show_error(char *especific_error) {
 void show_semantic_error_arg(Arg *expression, char *especific_error) {
   erros_semanticos++;
   printf(RED "Semantic Erros: %d\n" RESET, erros_semanticos);
-  printf(RED "Error Semantico na Linha: %d\t" RESET, expression->linha);
-  printf(RED "Error Semantico na Coluna: %d\n" RESET, expression->coluna);
+  if(expression != NULL){
+    printf(RED "Error Semantico na Linha: %d\t" RESET, expression->linha);
+    printf(RED "Error Semantico na Coluna: %d\n" RESET, expression->coluna);
+  }
   printf(RED "%s\n" RESET, especific_error);
 }
 
@@ -433,40 +446,42 @@ bool verify_call(int args, Folha *call) {
 }
 
 char* verify_unary_list(Node *expression, Folha *operator) {
-  if(strcmp(operator->valor, "%") == 0 || strcmp(operator->valor, "?") == 0 ) {
-    if(verify_type(expression, "int") || verify_type(expression, "float") || verify_type(expression, "list")){
-      show_semantic_error(expression, "Operações unárias de lista só podem ser chamadas com os tipos intlist ou floatlist");
-      return "undefined";
-    } else if(strcmp(operator->valor, "%") == 0) {
-      return expression->type;
-    } else {
-      if(verify_type(expression, "intlist"))
+  if(expression != NULL){
+    if(strcmp(operator->valor, "%") == 0 || strcmp(operator->valor, "?") == 0 ) {
+      if(verify_type(expression, "int") || verify_type(expression, "float") || verify_type(expression, "list")){
+        show_semantic_error(expression, "Operações unárias de lista só podem ser chamadas com os tipos intlist ou floatlist");
+        return "undefined";
+      } else if(strcmp(operator->valor, "%") == 0) {
+        return expression->type;
+      } else {
+        if(verify_type(expression, "intlist"))
+          return "int";
+        if(verify_type(expression, "floatlist"))
+          return "float";
+      }
+    } else if(strcmp(operator->valor, "!") == 0) {
+      if(verify_type(expression, "float")){
+        assign_type(expression, "float_to_int");
         return "int";
-      if(verify_type(expression, "floatlist"))
-        return "float";
-    }
-  } else if(strcmp(operator->valor, "!") == 0) {
-    if(verify_type(expression, "float")){
-      assign_type(expression, "float_to_int");
-      return "int";
-    }
-    if(verify_type(expression, "int"))
-      return "int";
-    if(verify_type(expression, "intlist") || verify_type(expression, "floatlist"))
-      return expression->type;
-    else {
-      show_semantic_error(expression, "Operação de tail ! não pode ser aplicada na constante NIL");
-      return "undefined";
-    }
-  } else {
-    if(!verify_type(expression, "int") && !verify_type(expression, "float")) {
-      show_semantic_error(expression, "Constantes negativas ou positivas só podem ser do tipo int ou float");
-      return "undefined";
-    } else {
+      }
       if(verify_type(expression, "int"))
         return "int";
-      if(verify_type(expression,"float"))
-        return "float";
+      if(verify_type(expression, "intlist") || verify_type(expression, "floatlist"))
+        return expression->type;
+      else {
+        show_semantic_error(expression, "Operação de tail ! não pode ser aplicada na constante NIL");
+        return "undefined";
+      }
+    } else {
+      if(!verify_type(expression, "int") && !verify_type(expression, "float")) {
+        show_semantic_error(expression, "Constantes negativas ou positivas só podem ser do tipo int ou float");
+        return "undefined";
+      } else {
+        if(verify_type(expression, "int"))
+          return "int";
+        if(verify_type(expression,"float"))
+          return "float";
+      }
     }
   }
 

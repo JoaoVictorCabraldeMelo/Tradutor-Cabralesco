@@ -584,10 +584,16 @@ forStatement:
 
 returnStatement:
   RETURN expression ';' {
-    put_return_in_list($1->linha, $1->coluna, $2->type, $2);
+    if($2 != NULL){
+      put_return_in_list($1->linha, $1->coluna, $2->type, $2);
+      $$ = aloca_no("returnStatement", $2->type);
+      $$->filhos[0] = aloca_no("", $2->type);
+    }
+    else{
+      $$->filhos[0] = aloca_no("", "undefined");
+      put_return_in_list($1->linha, $1->coluna, "undefined",$$->filhos[0]);
+    }
 
-    $$ = aloca_no("returnStatement", $2->type);
-    $$->filhos[0] = aloca_no("", $2->type);
     $$->filhos[1] = $2;
   }
 
@@ -622,7 +628,10 @@ inputStatement:
 
 outputStatement:
   OUTPUT '(' term ')' ';' {
-    $$ = aloca_no("outputStatement", $3->type);
+    if($3 != NULL)
+      $$ = aloca_no("outputStatement", $3->type);
+    else
+      $$ = aloca_no("outputStatement", "undefined");
 
     char *type = "undefined";
 

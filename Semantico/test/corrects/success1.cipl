@@ -9,7 +9,5 @@ int main() {
     n : a;
   }
 
-  writeln(a);
-
   return 0;
 }
