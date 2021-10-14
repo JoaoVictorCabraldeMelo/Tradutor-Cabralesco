@@ -209,7 +209,10 @@ functionParam:
     sim.value = $2->valor;
     sim.tipo_funcao = eh;
 
-    coloca_simbolo(sim);
+    Simbolo* function_symbol = coloca_simbolo(sim);
+
+    seta_argumentos(function_symbol);
+
     verify_return_types($1->valor);
 
     $$ = aloca_no("functionParam", $1->valor);
@@ -244,7 +247,10 @@ functionParam:
     sim.tipo_funcao = eh;
     sim.value = $3->valor;
 
-    coloca_simbolo(sim);
+    Simbolo* function_symbol = coloca_simbolo(sim);
+
+    seta_argumentos(function_symbol);
+
     verify_return_types(tipo);
 
     strcpy($3->tipo, tipo);
@@ -415,8 +421,10 @@ call:
     bool ok = verify_call(nro_argumentos, $1);
     char* type;
 
-    if(ok)
+    if(ok){
       type = $1->tipo;
+      verify_arg_list($1);
+    }
     else
       type = "undefined";
 
@@ -428,6 +436,7 @@ call:
 
     coloca_terminal($$->filhos[0], $1);
 
+    clear_arg_list();
     nro_argumentos = 0;
   }
 
@@ -442,6 +451,8 @@ argList:
     $$->filhos[0] = $1;
     $$->filhos[1] = aloca_no("", $3->tipo);
 
+    put_arg_in_list($3->linha, $3->coluna, $3->tipo, $$->filhos[1]);
+
     $3->escopo = escopo_atual->scope_size;
 
     coloca_terminal($$->filhos[1], $3);
@@ -454,6 +465,8 @@ argList:
 
     $$ = aloca_no("argList", $1->tipo);
     $$->filhos[0] = aloca_no("", $1->tipo);
+
+    put_arg_in_list($1->linha, $1->coluna, $1->tipo, $$->filhos[0]);
 
     $1->escopo = escopo_atual->scope_size;
 

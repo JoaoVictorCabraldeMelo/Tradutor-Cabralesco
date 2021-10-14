@@ -14,6 +14,10 @@ Return *first_return = NULL;
 
 Return *last_return = NULL;
 
+Arg *first_arg = NULL;
+
+Arg *last_arg = NULL;
+
 
 void assign_type(Node *expression, char *type){
   strcpy(expression->type, type);
@@ -74,6 +78,35 @@ void show_error(char *especific_error) {
   printf(RED "%s\n" RESET, especific_error);
 }
 
+
+void show_semantic_error_arg(Arg *expression, char *especific_error) {
+  erros_semanticos++;
+  printf(RED "Semantic Erros: %d\n" RESET, erros_semanticos);
+  printf(RED "Error Semantico na Linha: %d\t" RESET, expression->linha);
+  printf(RED "Error Semantico na Coluna: %d\n" RESET, expression->coluna);
+  printf(RED "%s\n" RESET, especific_error);
+}
+
+Simbolo *return_simbol(char *id){
+  if( first != NULL)
+  {
+    Simbolo *tmp = first;
+    while (tmp != NULL)
+    {
+      if (strcmp(tmp->value, id) == 0)
+        break;
+
+      tmp = tmp->next;
+    }
+
+    if (tmp == NULL)
+      return NULL;
+    else
+      return tmp;
+  }
+
+  return NULL;
+}
 
 
 char *get_type_id(char *id, Folha *simbol)
@@ -545,4 +578,77 @@ void verify_return_types(char *type) {
       tmp = tmp->next;
     }
   }
+}
+
+void put_arg_in_list(int linha, int coluna, char* type, Node* expression) {
+  Arg *novo_arg = (Arg *)malloc(sizeof(Arg));
+  novo_arg->linha = linha;
+  novo_arg->coluna = coluna;
+  novo_arg->type = strdup(type);
+  novo_arg->expression = expression;
+
+
+  if (first_arg == NULL && last_arg == NULL)
+  {
+    first_arg = novo_arg;
+    last_arg = novo_arg;
+  }
+  else
+  {
+    last_arg->next = novo_arg;
+    novo_arg->back = last_arg;
+    last_arg = novo_arg;
+  }
+}
+
+void clear_arg_list() {
+  if (first_arg != NULL)
+  {
+    Arg *tmp = first_arg;
+    while (tmp != NULL)
+    {
+      Arg *aux;
+      aux = tmp;
+      free(aux->type);
+      tmp = tmp->next;
+      free(aux);
+    }
+
+    first_arg = NULL;
+    last_arg = NULL;
+  }
+}
+
+void verify_arg_list(Folha *id_func) {
+
+  Simbolo *func = return_simbol(id_func->valor);
+
+
+  if(last_arg != NULL && func != NULL){
+    Arg *tmp_call = last_arg;
+    Arg_Type *tmp_func = func->first_arg_type;
+    while(tmp_call != NULL && tmp_func != NULL){
+      Arg *aux_call = tmp_call;
+      Arg_Type *aux_func = tmp_func;
+
+      if(strcmp(aux_call->type, aux_func->tipo) != 0){
+        if(strcmp(aux_call->type, "int") == 0 && strcmp(aux_func->tipo, "float") != 0)
+          show_semantic_error_arg(aux_call, "Chamada com o tipo int de parametro que não pode ser convertido ao tipo do argumento da função");
+        else if(strcmp(aux_call->type, "int") == 0 && strcmp(aux_func->tipo, "float") == 0)
+          assign_type(aux_call->expression, "int_to_float");
+        else if(strcmp(aux_call->type, "float") ==  0 && strcmp(aux_func->tipo, "int") != 0)
+          show_semantic_error_arg(aux_call, "Chamada com o tipo float de parametro que não pode ser convertido ao tipo do argumento da função");
+        else if(strcmp(aux_call->type, "float") == 0 && strcmp(aux_func->tipo, "int") == 0)
+          assign_type(aux_call->expression, "float_to_int");
+        else if(strcmp(aux_call->type, "list") == 0 && strcmp(aux_func->tipo, "intlist") != 0 && strcmp(aux_func->tipo, "floatlist") != 0)
+          show_semantic_error_arg(aux_call, "Chamada com a constante NIL porém argumento de função não é int list ou float list");
+        else
+          show_semantic_error_arg(aux_call, "Chamada com o tipo que não conversão com o argumento da função");
+      }
+
+      tmp_func = tmp_func->next;
+      tmp_call = tmp_call->back;
+    }
+  }
+
 }

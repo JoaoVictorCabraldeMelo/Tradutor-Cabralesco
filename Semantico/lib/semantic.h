@@ -7,6 +7,8 @@
 
 typedef struct return_stmt Return;
 
+typedef struct arg Arg;
+
 struct return_stmt {
   int linha;
   int coluna;
@@ -15,6 +17,19 @@ struct return_stmt {
   Return *next;
   Return *back;
 };
+
+struct arg {
+  int linha;
+  int coluna;
+  char *type;
+  Node *expression;
+  Arg *next;
+  Arg *back;
+};
+
+extern Arg *first_arg;
+
+extern Arg *last_arg;
 
 extern Return *first_return;
 
@@ -55,6 +70,8 @@ void show_semantic_error_symbol( Simbolo *simbol, char *especific_error);
 
 void show_semantic_error_return(Return *expression, char *especific_error);
 
+void show_semantic_error_arg(Arg *expression, char *especific_error);
+
 char *what_type(Node *expressionA, Node *expressionB);
 
 int get_number_of_arguments(char *id);
@@ -74,5 +91,13 @@ void put_return_in_list(int linha, int coluna, char *type, Node* expression);
 void clear_return_list();
 
 void verify_return_types(char *type);
+
+void put_arg_in_list(int linha, int coluna, char* type, Node* expression);
+
+void clear_arg_list();
+
+void verify_arg_list(Folha *id_func);
+
+Simbolo *return_simbol(char *id);
 
 #endif

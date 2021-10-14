@@ -8,7 +8,7 @@ Simbolo *first = NULL;
 
 Simbolo *last = NULL;
 
-void coloca_simbolo(Simbolo simbolo)
+Simbolo * coloca_simbolo(Simbolo simbolo)
 {
   Simbolo *novo_simbolo = (Simbolo *)malloc(sizeof(Simbolo));
   novo_simbolo->coluna = simbolo.coluna;
@@ -21,6 +21,8 @@ void coloca_simbolo(Simbolo simbolo)
   novo_simbolo->eh_parametro = simbolo.eh_parametro;
   novo_simbolo->next = NULL;
   novo_simbolo->back = NULL;
+  novo_simbolo->first_arg_type = NULL;
+  novo_simbolo->last_arg_type = NULL;
 
   if (first == NULL && last == NULL)
   {
@@ -33,6 +35,23 @@ void coloca_simbolo(Simbolo simbolo)
     novo_simbolo->back = last;
     last = novo_simbolo;
   }
+
+  return novo_simbolo;
+}
+
+void coloca_argumentos(char *tipo, Simbolo *simbolo){
+  Arg_Type *novo_argumento = (Arg_Type *)malloc(sizeof(Arg_Type));
+  novo_argumento->tipo = strdup(tipo);
+
+  if(simbolo->first_arg_type == NULL && simbolo->last_arg_type == NULL){
+    simbolo->first_arg_type = novo_argumento;
+    simbolo->last_arg_type = novo_argumento;
+  } else {
+    simbolo->last_arg_type->next = novo_argumento;
+    simbolo->last_arg_type->back = simbolo->last_arg_type;
+    simbolo->last_arg_type = novo_argumento;
+  }
+
 }
 
 void libera_tabela()
@@ -47,6 +66,19 @@ void libera_tabela()
       free(aux->tipo);
       free(aux->tipo_funcao);
       free(aux->value);
+
+      //Da free na arg list
+      if(aux->first_arg_type != NULL){
+        Arg_Type *tmp = aux->first_arg_type;
+        while(tmp != NULL){
+          Arg_Type *aux;
+          aux = tmp;
+          free(aux->tipo);
+          tmp = tmp->next;
+          free(aux);
+        }
+      }
+
       tmp = tmp->next;
       free(aux);
     }
@@ -87,12 +119,33 @@ int calcula_nro_parametros() {
       if(strcmp(tmp->tipo_funcao, "Eh funcao") == 0)
         break;
 
-      if(tmp->eh_parametro)
+      if(tmp->eh_parametro){
         count++;
+      }
 
       tmp = tmp->back;
     }
     return count;
   }
+
+
   return 0;
+}
+
+void seta_argumentos(Simbolo *sim) {
+  if(last != NULL)
+  {
+    Simbolo *tmp = last->back;
+    while(tmp != NULL){
+
+      if(strcmp(tmp->tipo_funcao, "Eh funcao") == 0)
+        break;
+
+      if(tmp->eh_parametro){
+        coloca_argumentos(tmp->tipo, sim);
+      }
+
+      tmp = tmp->back;
+    }
+  }
 }
