@@ -7,6 +7,7 @@
 #include "arvore.h"
 #include "colors.h"
 #include "semantic.h"
+#include "escopo.h"
 
 int erros_semanticos = 0;
 
@@ -666,4 +667,16 @@ void verify_arg_list(Folha *id_func) {
     }
   }
 
+}
+
+
+void verify_context(char *id){
+  if(first != NULL){
+    Simbolo *tmp = first;
+    while(tmp != NULL){
+      if(strcmp(tmp->value, id) == 0 && escopo_atual->scope_size == tmp->escopo)
+        show_error("Variavel ou função redeclarada no mesmo contexto!!");
+      tmp = tmp->next;
+    }
+  }
 }

@@ -134,6 +134,8 @@ variableParam:
     strcpy(tipo, $1->valor);
     strcat(tipo, $2->valor);
 
+    verify_context($3->valor);
+
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -162,6 +164,8 @@ variableParam:
   }
   | TYPE ID ';' {
     Simbolo sim;
+
+    verify_context($2->valor);
 
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
@@ -200,6 +204,8 @@ functionParam:
   TYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
 
+    verify_context($2->valor);
+
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -234,6 +240,8 @@ functionParam:
   | TYPE LISTTYPE ID '(' functionParams ')' stmt {
     Simbolo sim;
     char tipo[10];
+
+    verify_context($3->valor);
 
     strcpy(tipo, $1->valor);
     strcat(tipo,$2->valor);
@@ -290,6 +298,8 @@ functionParamsList:
 
     Simbolo sim;
 
+    verify_context($4->valor);
+
     sim.linha = $4->linha;
     sim.coluna = $4->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -319,6 +329,8 @@ functionParamsList:
 
     Simbolo sim;
     char tipo[10];
+
+    verify_context($5->valor);
 
     strcpy(tipo, $3->valor);
     strcat(tipo, $4->valor);
@@ -356,6 +368,8 @@ functionParamsList:
 
     Simbolo sim;
 
+    verify_context($2->valor);
+
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
     sim.escopo = escopo_atual->scope_size;
@@ -382,6 +396,8 @@ functionParamsList:
   | TYPE LISTTYPE ID {
     Simbolo sim;
     char tipo[10];
+
+    verify_context($3->valor);
 
     strcpy(tipo, $1->valor);
     strcat(tipo, $2->valor);

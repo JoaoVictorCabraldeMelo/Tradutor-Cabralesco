@@ -100,4 +100,6 @@ void verify_arg_list(Folha *id_func);
 
 Simbolo *return_simbol(char *id);
 
+void verify_context(char *id);
+
 #endif

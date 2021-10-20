@@ -1,4 +1,4 @@
-int newTest(int a){
+int newTest(int c){
   for(){
     int c;
     int d;
@@ -8,6 +8,7 @@ int newTest(int a){
   return d;
 }
 
+float a;
 
 
 int main(){
