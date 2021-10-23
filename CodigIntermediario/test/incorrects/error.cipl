@@ -1,0 +1,39 @@
+int newTest(int c){
+  for(){
+    int c;
+    int d;
+    c : d;
+  }
+  int list d;
+  return d;
+}
+
+float a;
+
+
+int main(){
+  int a;
+
+  read(a);
+
+  float &;
+
+  if(a == 5.5925){
+    writeln("ta certo ?");
+  }
+
+  float list $;
+  float list b;
+
+  a = b;
+
+  newTest(a);
+
+  c = a;
+
+  if(){
+    write(a);
+  }
+
+  return 0;
+}

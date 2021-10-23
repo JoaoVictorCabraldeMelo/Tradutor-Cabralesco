@@ -1,0 +1,27 @@
+
+
+int sum(int a, int b){
+  return a + b;
+}
+
+int show(int x){
+  return x;
+}
+
+
+int not_main(){
+
+  float a;
+  int @;
+
+
+  int list b;
+
+  x << ;
+
+  % ;
+
+  sum(a);
+
+  return 0;
+}

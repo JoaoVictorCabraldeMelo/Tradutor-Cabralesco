@@ -1,0 +1,12 @@
+float eq1(float x) {
+  return x == 1;
+}
+
+int main()
+{
+  float list listaDeNumeros;
+  float list EQ1;
+
+  EQ1 = eq1 << listaDeNumeros;
+
+}

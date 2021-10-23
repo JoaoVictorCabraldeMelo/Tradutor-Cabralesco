@@ -1,0 +1,25 @@
+int leq_10(int list x){
+  return x <= 10;
+}
+
+int fun (int a){
+  float i;
+  i = a;
+}
+
+int main() {
+  int a;
+  float  b;
+  int list d;
+  float list c;
+
+  leq_10(c);
+
+  a = 1;
+  b = 2.14;
+
+  a:b:NIL;
+
+  return 0;
+
+}
