@@ -528,7 +528,7 @@ char *yytext;
 #include "colors.h"
 int lines = 1;
 int columns = 1;
-int errors = 0;
+int errors_lex = 0;
 #line 533 "./src/lex.yy.c"
 #line 534 "./src/lex.yy.c"
 
@@ -1195,7 +1195,7 @@ case 34:
 YY_RULE_SETUP
 #line 342 "./src/lexico.l"
 {
-  errors++;
+  errors_lex++;
   printf( BHRED "lexycal error: %s \n"  "Unidentified Lexeme at line: %d and column: %d\n" RESET, yytext, lines, columns);
   return LEXICAL_ERROR;
 }

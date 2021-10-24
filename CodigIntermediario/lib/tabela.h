@@ -36,6 +36,8 @@ extern Simbolo *first;
 
 extern Simbolo *last;
 
+extern int errors_lex;
+
 Simbolo * coloca_simbolo(Simbolo simbolo);
 
 void coloca_argumentos(char *tipo, Simbolo *simbolo);

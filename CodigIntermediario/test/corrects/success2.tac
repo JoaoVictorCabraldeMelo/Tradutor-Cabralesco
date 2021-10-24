@@ -1,0 +1,2 @@
+.table
+float x0

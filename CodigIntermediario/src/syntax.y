@@ -14,6 +14,7 @@
   #include "tabela.h"
   #include "colors.h"
   #include "semantic.h"
+  #include "gci.h"
 
   #define eh "Eh funcao"
   #define nao_eh "Nao eh"
@@ -1047,14 +1048,22 @@ int main(int argc, char **argv) {
 
   mostra_tabela();
 
-  libera_tabela();
-
   mostra_header();
 
   mostra_arvore(raiz, 0);
 
   mostra_footer();
 
+  if(verify_for_errors(errors_lex, error, erros_semanticos))
+    show_message();
+  else if(argc > 1) {
+    FILE *tac_file = create_tac(argv[1]);
+    write_table(tac_file);
+    fclose(tac_file);
+  }
+
+  libera_tabela();
+  
   libera_arvore(raiz);
 
   libera_folhas();

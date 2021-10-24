@@ -1,9 +1,9 @@
 int list IL;
 float list FL;
 
-int show_variable(int x){
-	writeln(x);
-	return x;
+int show_variable(int y){
+	writeln(y);
+	return y;
 }
 
 int list read_list(int n) {
