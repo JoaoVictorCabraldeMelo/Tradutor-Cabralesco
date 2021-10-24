@@ -12,4 +12,6 @@ FILE* create_tac(char *filename);
 
 void write_table(FILE *file);
 
+void write_code(FILE *file);
+
 #endif 

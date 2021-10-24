@@ -1059,6 +1059,7 @@ int main(int argc, char **argv) {
   else if(argc > 1) {
     FILE *tac_file = create_tac(argv[1]);
     write_table(tac_file);
+    write_code(tac_file);
     fclose(tac_file);
   }
 

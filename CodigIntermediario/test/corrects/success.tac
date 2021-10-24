@@ -7,3 +7,4 @@ int i0
 float x0
 int n1
 int n2
+.code

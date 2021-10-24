@@ -71,3 +71,10 @@ void write_table(FILE *file)
     }
   }
 }
+
+void write_code(FILE *file)
+{
+  char *code = ".code\n";
+
+  fprintf(file, "%s", code);
+}
