@@ -4,7 +4,7 @@ all:
 	cc  -Wall -Wextra -Wpedantic -g ./src/*.c -o tradutor -Ilib -O0 -lm; \
 
 memory_check: 
-	valgrind -v --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file="logfile.out" ./tradutor ./test/success.c
+	valgrind -v --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file="logfile.out" ./tradutor ./test/corrects/success.cipl
 
 
 clean:

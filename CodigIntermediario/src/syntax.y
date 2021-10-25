@@ -644,7 +644,7 @@ inputStatement:
   }
 
 outputStatement:
-  OUTPUT '(' term ')' ';' {
+  OUTPUT '(' expression ')' ';' {
     if($3 != NULL)
       $$ = aloca_no("outputStatement", $3->type);
     else
@@ -937,7 +937,11 @@ unaryTerm:
 
 immutable:
   '(' expression ')' {
-    $$ = aloca_no("immutable", $2->type);
+    if($2 != NULL)
+      $$ = aloca_no("immutable", $2->type);
+    else 
+      $$ = aloca_no("immutable", "undefined");
+      
     $$->filhos[0] = aloca_no("", "undefined");
     $$->filhos[1] = $2;
     $$->filhos[2] = aloca_no("", "undefined");

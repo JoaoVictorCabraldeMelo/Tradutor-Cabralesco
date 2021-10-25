@@ -369,7 +369,7 @@ char* list_type_check(Node *expressionA, Node *operator, Node *expressionB){
     if(!verify_type(expressionB, "intlist") && !verify_type(expressionB, "floatlist") && !verify_type(expressionB, "list")){
       show_semantic_error(expressionB, "Expressão B de um map deve possuir um tipo int list ou float list ou NIL");
       return "undefined";
-    } else if(expressionA->terminal_value != NULL){
+    } else if(expressionA != NULL && expressionA->terminal_value != NULL){
       if(get_number_of_arguments(expressionA->terminal_value->valor) == 1){
         if(verify_type(expressionA, "int"))
           return "intlist";
@@ -386,7 +386,7 @@ char* list_type_check(Node *expressionA, Node *operator, Node *expressionB){
     if(!verify_type(expressionB, "intlist") && !verify_type(expressionB, "floatlist") && !verify_type(expressionB, "list")){
       show_semantic_error(expressionB, "Expressão B de um filter deve possuir um tipo int list ou float list ou NIL");
       return "undefined";
-    } else if(expressionA->terminal_value != NULL){
+    } else if(expressionA != NULL && expressionA->terminal_value != NULL){
       if(get_number_of_arguments(expressionA->terminal_value->valor) == 1){
         return expressionB->type;
       } else {

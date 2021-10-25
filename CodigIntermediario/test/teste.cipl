@@ -1,24 +1,37 @@
-int leq_10(int list x){
-  return x <= 10;
+
+int func(int a){
+  return a;
 }
 
-int fun (int a){
-  float i;
-  i = a;
-}
+int list main;
+
 
 int main() {
   int a;
   float  b;
-  int list d;
-  float list c;
+  int c;
+  int d;
 
-  leq_10(c);
+  int x;
 
-  a = 1;
-  b = 2.14;
+  x = a * ((b+c) - d);
 
-  a:b:NIL;
+  writeln(x);
+
+  if((a > b || c <= d) && x <= 0){
+    writeln("Oi");
+  } else {
+    writeln("Tchau");
+  }
+
+  for(a = 0; a <= b && c <= d; a = a+1){
+    c = c+ 1;
+  }
+
+  writeln(a*(b + c));
+
+  float list al;
+
 
   return 0;
 
