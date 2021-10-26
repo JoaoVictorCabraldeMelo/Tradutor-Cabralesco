@@ -11,17 +11,16 @@ int show(int x){
 
 int not_main(){
 
-  float a;
+  float list a;
   int @;
 
 
   int list b;
 
-  x << ;
 
-  % ;
+  if(a < b){
+    writeln("Oi");
+  }else
 
-  sum(a);
-
-  return 0;
+  
 }

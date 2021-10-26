@@ -96,6 +96,10 @@
 %precedence ')'
 %precedence ELSE
 
+%destructor {  } program
+%destructor { libera_arvore($$); } <producao>
+ 
+
 
 %start program
 
@@ -591,11 +595,15 @@ forStatement:
   | FOR '(' expStatement expression ')'  {
     $$ = NULL;
     yyerror("Error For Statement missing one expression statement !!");
+    libera_arvore($3);
+    libera_arvore($4);
     yyerrok;
   }
   | FOR '(' expStatement expStatement ')' {
     $$ = NULL;
     yyerror("Error For Statement missing the last expression !!");
+    libera_arvore($3);
+    libera_arvore($4);
     yyerrok;
   }
 
@@ -727,6 +735,7 @@ orExpression:
   | orExpression OR {
     $$ = NULL;
     yyerror("Error Or Expression missing one parameter !!");
+    libera_arvore($1);
     yyerrok;
   }
   | OR {
@@ -762,6 +771,7 @@ andExpression:
   | andExpression AND {
     $$ = NULL;
     yyerror("Error And Expression missing one parameter !!");
+    libera_arvore($1);
     yyerrok;
   }
   | AND {
@@ -797,6 +807,7 @@ relationalExpression:
   | relationalExpression REL_OP {
     $$ = NULL;
     yyerror("Error Relational Expression missing one parameter !!");
+    libera_arvore($1);
     yyerrok;
   }
   | REL_OP {
@@ -879,9 +890,8 @@ term:
   | immutable {
     $$ = $1;
   }
-  | error {
+  | error  {
     $$ = NULL;
-    yyerrok;
   }
 
 unaryTerm:

@@ -5,5 +5,4 @@ float b1
 int c1
 int d1
 int x1
-int main1
 .code

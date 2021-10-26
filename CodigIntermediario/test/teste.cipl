@@ -3,8 +3,6 @@ int func(int a){
   return a;
 }
 
-int list main;
-
 
 int main() {
   int a;
@@ -14,7 +12,7 @@ int main() {
 
   int x;
 
-  x = a * ((b+c) - d);
+  x = (b+c) * a;
 
   writeln(x);
 
@@ -28,7 +26,10 @@ int main() {
     c = c+ 1;
   }
 
-  writeln(a*(b + c));
+
+
+  func(,a);
+
 
   float list al;
 
