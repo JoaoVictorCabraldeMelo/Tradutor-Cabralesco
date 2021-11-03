@@ -1,12 +1,31 @@
-float eq1(float x) {
-  return x == 1;
+float func(float x) {
+
+  int a;
+  float b;
+  float c;
+
+  read(a);
+  read(b);
+  read(c);
+
+  x = (c / (a * b)) - x;
+
+  return x;
 }
 
 int main()
 {
-  float list listaDeNumeros;
-  float list EQ1;
+  float x;
 
-  EQ1 = eq1 << listaDeNumeros;
+  int y;
 
+  read(x);
+
+  for(y = 0; y*2 != x && y*2 != 0; y = (x * y) / 2){
+    writeln(func(y));
+    x = func(y);
+  }
+
+  
+  return 0;
 }

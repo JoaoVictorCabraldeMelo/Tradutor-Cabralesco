@@ -1,13 +1,50 @@
+
+int func(int a, float b, int c, int d){
+
+  float y; 
+
+  y = ((a * b) - c) / d;
+
+  return y;
+}
+
+
 int main() {
-  int n;
-  int i;
+  int a;
+  float  b;
+  int c;
+  int d;
 
-  int list a;
+  read(a);
 
-  for(i = 0; i < n; i = i + 1){
-    read(n);
-    n : a;
+  int x;
+
+  x = (b+c) * a;
+
+  writeln(x);
+
+  if(x < a){
+    writeln("Abraço");
   }
 
+  if((a > b || c <= d) && x <= 0){
+    writeln("Oi");
+  } else {
+    writeln("Tchau");
+  }
+
+  for(a = 0; a <= b && c <= d; a = a+1){
+    c = c+ 1;
+  }
+
+
+
+  x = func(a, b, c, d);
+
+
+  writeln(x);
+
+
   return 0;
+
 }

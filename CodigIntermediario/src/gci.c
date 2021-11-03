@@ -6,9 +6,13 @@
 
 #include "colors.h"
 #include "tabela.h"
+#include "arvore.h"
+#include "gci.h"
 
 char *space = " ";
 char *enter = "\n";
+
+int count = 0;
 
 bool verify_for_errors(int errors_lex, int errors_sint, int errors_seman)
 {
@@ -77,4 +81,72 @@ void write_code(FILE *file)
   char *code = ".code\n";
 
   fprintf(file, "%s", code);
+
+  if (raiz != NULL)
+  {
+    read_tree(file, raiz);
+  }
+}
+
+void read_tree(FILE *file, Node *raiz)
+{
+  if (raiz == NULL)
+    return;
+
+  for (int i = 0; i < 7; i++)
+    read_tree(file, raiz->filhos[i]);
+
+  if (raiz->production_value != NULL)
+  {
+    generate_mul_div_expression(file, raiz);
+  }
+}
+
+void generate_mul_div_expression(FILE *file, Node *expression)
+{
+  if (strcmp(expression->production_value, "arithmMulDivExpression") == 0)
+  {
+    if (strcmp(expression->filhos[1]->terminal_value->valor, "*") == 0)
+    {
+      if (expression->filhos[0]->terminal_value != NULL)
+      {
+        fprintf(file, "mul $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[0]->terminal_value->valor);
+      }
+      else if (expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "mul $%d, %s, $%d\n", get_value(), expression->filhos[2]->terminal_value->valor, get_anterior(1));
+      }
+      else
+      {
+        fprintf(file, "mul $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+      }
+    }
+    else
+    {
+      if (expression->filhos[0]->terminal_value != NULL)
+      {
+        fprintf(file, "div $%d, %s, $%d\n", get_value(), expression->filhos[2]->terminal_value->valor, get_anterior(1));
+      }
+      else if (expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "div $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
+      }
+      else{
+        fprintf(file, "div $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+      }
+    }
+  }
+}
+
+int get_value()
+{
+  int value = count % 9;
+  count++;
+  return value;
+}
+
+int get_anterior(int quantity)
+{
+  int value = abs(count - quantity);
+  return value % 9;
 }

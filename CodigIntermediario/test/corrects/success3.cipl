@@ -1,26 +1,60 @@
+
+int show_variable(int y){
+	writeln(y);
+	return y;
+}
+
+int list read_list(int n) {
+	float i;
+	int list new;
+	new = NIL;
+	i = -435.7;
+	for (i = 0; i < n ; i = i + 1) {
+		int elem;
+		writeln("Digite o elemento da lista: ");
+		read(elem);
+		new = elem : new;
+	}
+	show_variable(i);
+	return new;
+}
+
+int mul_by_two(int x) {
+	return x * 2;
+}
+
+int is_greater_than_four(int xx) {
+	return xx > 4;
+}
+
+
 int main() {
 
-	writeln("Digite os número de elementos da lista: ");
-
 	int n;
-	float list FL10;
 	read(n);
-	
-	IL  = read_list(n);
-	FL = succ >> IL;
 
-	FL10 = leq_10 <<  FL;
-	if (FL10 != NIL) {
-		float list AUXL;
-		int n; n = 0;
-		for (AUXL=FL10; AUXL != NIL; AUXL = !AUXL) {
-			n = n + 1;
-			write(?AUXL); write(" ");
-		}
-		writeln(" ");
-		write("A nova lista tem "); write(n); writeln(" elementos.");
-	}
-	else writeln("A nova lista não possui elementos.");
+	int list xl;
+
+	xl = read_list(n);
+
+	writeln(?xl);
+
+	int list yl;
+	int list zl;
+
+	yl = !xl;
+
+	zl = %xl;
+
+	zl = mul_by_two >> xl;
+
+	yl = is_greater_than_four << xl;
+
+	int new_value;
+
+	read(new_value);
+
+	new_value : yl;
 
 	return 0;
 }
