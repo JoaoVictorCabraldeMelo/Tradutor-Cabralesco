@@ -966,39 +966,35 @@ immutable:
 const:
   INT {
     $$ = aloca_no("int", "int");
-    $$->filhos[0] = aloca_no("", "int");
 
     $1->escopo = -1;
     strcpy($1->tipo, "int");
-
-    coloca_terminal($$->filhos[0], $1);
+    
+    coloca_terminal($$, $1);
   }
   | FLOAT {
     $$ = aloca_no("float", "float");
-    $$->filhos[0] = aloca_no("", "float");
 
     $1->escopo = -1;
     strcpy($1->tipo, "float");
 
-    coloca_terminal($$->filhos[0], $1);
+    coloca_terminal($$, $1);
   }
   | STRING {
     $$ = aloca_no("string", "string");
-    $$->filhos[0] = aloca_no("", "string");
 
     $1->escopo = -1;
     strcpy($1->tipo, "string");
 
-    coloca_terminal($$->filhos[0], $1);
+    coloca_terminal($$, $1);
   }
   | NIL {
     $$ = aloca_no("list", "list");
-    $$->filhos[0] = aloca_no("", "list");
 
     $1->escopo = -1;
     strcpy($1->tipo, "list");
 
-    coloca_terminal($$->filhos[0], $1);
+    coloca_terminal($$, $1);
   }
 
 listOP:

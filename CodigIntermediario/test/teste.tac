@@ -10,6 +10,10 @@ int c1
 int d1
 int x1
 .code
-mul $0, $1, a
-div $1, $0, d
-mul $2, a, $1
+mul $0, a, b
+sub $1, $0, c
+div $2, $1, d
+add $3, b, c
+mul $4, a, $3
+add $5, a, 1
+add $6, c, 1

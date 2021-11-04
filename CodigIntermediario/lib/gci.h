@@ -17,6 +17,8 @@ void read_tree(FILE *file, Node *raiz);
 
 void generate_mul_div_expression(FILE *file, Node *expression);
 
+void generate_sub_add_expression(FILE *file, Node *expression);
+
 int get_value();
 
 int get_anterior(int quantity);

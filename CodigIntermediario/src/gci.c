@@ -99,6 +99,7 @@ void read_tree(FILE *file, Node *raiz)
   if (raiz->production_value != NULL)
   {
     generate_mul_div_expression(file, raiz);
+    generate_sub_add_expression(file, raiz);
   }
 }
 
@@ -108,7 +109,11 @@ void generate_mul_div_expression(FILE *file, Node *expression)
   {
     if (strcmp(expression->filhos[1]->terminal_value->valor, "*") == 0)
     {
-      if (expression->filhos[0]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "mul $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
+      }
+      else if (expression->filhos[0]->terminal_value != NULL)
       {
         fprintf(file, "mul $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[0]->terminal_value->valor);
       }
@@ -123,16 +128,67 @@ void generate_mul_div_expression(FILE *file, Node *expression)
     }
     else
     {
-      if (expression->filhos[0]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
       {
-        fprintf(file, "div $%d, %s, $%d\n", get_value(), expression->filhos[2]->terminal_value->valor, get_anterior(1));
+        fprintf(file, "div $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
+      }
+      else if (expression->filhos[0]->terminal_value != NULL)
+      {
+        fprintf(file, "div $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
       else if (expression->filhos[2]->terminal_value != NULL)
       {
         fprintf(file, "div $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
-      else{
+      else
+      {
         fprintf(file, "div $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+      }
+    }
+  }
+}
+
+void generate_sub_add_expression(FILE *file, Node *expression)
+{
+
+  if (strcmp(expression->production_value, "arithmExpression") == 0)
+  {
+    if (strcmp(expression->filhos[1]->terminal_value->valor, "+") == 0)
+    {
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "add $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
+      }
+      else if (expression->filhos[0]->terminal_value != NULL)
+      {
+        fprintf(file, "add $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
+      }
+      else if (expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "add $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
+      }
+      else
+      {
+        fprintf(file, "add $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+      }
+    }
+    else
+    {
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "sub $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
+      }
+      else if (expression->filhos[0]->terminal_value != NULL)
+      {
+        fprintf(file, "sub $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
+      }
+      else if (expression->filhos[2]->terminal_value != NULL)
+      {
+        fprintf(file, "sub $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
+      }
+      else
+      {
+        fprintf(file, "sub $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
       }
     }
   }

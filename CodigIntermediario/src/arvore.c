@@ -10,11 +10,11 @@ Folha *primeira_folha = NULL;
 
 Folha *ultima_folha = NULL;
 
-void put_space(int nro_tabs){
+void put_space(int nro_tabs)
+{
   for (int i = 0; i < nro_tabs; i++)
     printf(" ");
 }
-
 
 Node *aloca_no(char *production, char *type)
 {
@@ -60,12 +60,14 @@ void mostra_arvore(Node *raiz, int nro_tabs)
 
   put_space(nro_tabs);
 
-  if(raiz->production_value != NULL){
-    if (strcmp(raiz->production_value, "") != 0 )
+  if (raiz->production_value != NULL)
+  {
+    if (strcmp(raiz->production_value, "") != 0)
       printf(HMAG "%s (%s)\n" RESET, raiz->production_value, raiz->type);
-    else if(strcmp(raiz->type, "int_to_float") == 0 || strcmp(raiz->type, "float_to_int") == 0) {
+    else if (strcmp(raiz->type, "int_to_float") == 0 || strcmp(raiz->type, "float_to_int") == 0)
+    {
       printf(UYEL "(%s)\n" RESET, raiz->type);
-      put_space(nro_tabs+1);
+      put_space(nro_tabs + 1);
     }
   }
 
@@ -73,6 +75,11 @@ void mostra_arvore(Node *raiz, int nro_tabs)
   {
     if (raiz->terminal_value->escopo >= 0)
       printf(HMAG "»» " RESET BYEL " %s <escopo: %d> <%s>\n" RESET, raiz->terminal_value->valor, raiz->terminal_value->escopo, raiz->terminal_value->tipo);
+    else if (strcmp(raiz->production_value, "") != 0)
+    {
+      put_space(nro_tabs);
+      printf(HMAG "»» " RESET BYEL " %s\n" RESET, raiz->terminal_value->valor);
+    }
     else
       printf(HMAG "»» " RESET BYEL " %s\n" RESET, raiz->terminal_value->valor);
   }
