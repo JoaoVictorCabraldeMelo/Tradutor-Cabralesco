@@ -100,6 +100,8 @@ void read_tree(FILE *file, Node *raiz)
   {
     generate_mul_div_expression(file, raiz);
     generate_sub_add_expression(file, raiz);
+    generate_assign_expression(file, raiz);
+    generate_type_conversion(file, raiz);
   }
 }
 
@@ -109,40 +111,48 @@ void generate_mul_div_expression(FILE *file, Node *expression)
   {
     if (strcmp(expression->filhos[1]->terminal_value->valor, "*") == 0)
     {
-      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+          strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+          strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "mul $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
-      else if (expression->filhos[0]->terminal_value != NULL)
+      else if (expression->filhos[0]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0)
       {
         fprintf(file, "mul $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[0]->terminal_value->valor);
       }
-      else if (expression->filhos[2]->terminal_value != NULL)
+      else if (expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "mul $%d, %s, $%d\n", get_value(), expression->filhos[2]->terminal_value->valor, get_anterior(1));
       }
       else
       {
-        fprintf(file, "mul $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+        fprintf(file, "mul $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
       }
     }
     else
     {
-      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+          strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+          strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "div $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
-      else if (expression->filhos[0]->terminal_value != NULL)
+      else if (expression->filhos[0]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0)
       {
         fprintf(file, "div $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
-      else if (expression->filhos[2]->terminal_value != NULL)
+      else if (expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "div $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
       else
       {
-        fprintf(file, "div $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+        fprintf(file, "div $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
       }
     }
   }
@@ -155,42 +165,86 @@ void generate_sub_add_expression(FILE *file, Node *expression)
   {
     if (strcmp(expression->filhos[1]->terminal_value->valor, "+") == 0)
     {
-      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+          strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+          strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "add $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
-      else if (expression->filhos[0]->terminal_value != NULL)
+      else if (expression->filhos[0]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0)
       {
         fprintf(file, "add $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
-      else if (expression->filhos[2]->terminal_value != NULL)
+      else if (expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "add $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
       else
       {
-        fprintf(file, "add $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+        fprintf(file, "add $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
       }
     }
     else
     {
-      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL)
+      if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+          strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+          strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "sub $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
-      else if (expression->filhos[0]->terminal_value != NULL)
+      else if (expression->filhos[0]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0)
       {
         fprintf(file, "sub $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
-      else if (expression->filhos[2]->terminal_value != NULL)
+      else if (expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
       {
         fprintf(file, "sub $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
       else
       {
-        fprintf(file, "sub $%d, $%d, $%d\n", get_value(), get_anterior(1), get_anterior(2));
+        fprintf(file, "sub $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
       }
     }
+  }
+}
+
+void generate_assign_expression(FILE *file, Node *expression)
+{
+  if (strcmp(expression->production_value, "expression") == 0 && strcmp(expression->filhos[1]->terminal_value->valor, "=") == 0)
+  {
+    if (expression->filhos[2]->terminal_value != NULL &&
+        strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0)
+    {
+      fprintf(file, "mov %s, %s\n", expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
+    }
+    else
+    {
+      fprintf(file, "mov %s, $%d\n", expression->filhos[0]->terminal_value->valor, get_anterior(1));
+    }
+  }
+}
+
+void generate_type_conversion(FILE *file, Node *expression)
+{
+  if (strcmp(expression->type, "int_to_float") == 0 && expression->terminal_value != NULL)
+  {
+    fprintf(file, "inttofl $%d, %s\n", get_value(), expression->terminal_value->valor);
+  }
+  else if (strcmp(expression->type, "int_to_float") == 0)
+  {
+    fprintf(file, "inttofl $%d, $%d\n", get_value(), get_anterior(1));
+  }
+  else if (strcmp(expression->type, "float_to_int") == 0 && expression->terminal_value != NULL)
+  {
+    fprintf(file, "fltoint $%d, %s\n", get_value(), expression->terminal_value->valor);
+  }
+  else if (strcmp(expression->type, "float_to_int") == 0)
+  {
+    fprintf(file, "fltoint $%d, $%d\n", get_value(), get_anterior(1));
   }
 }
 
