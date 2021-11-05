@@ -22,8 +22,8 @@ add $6, b2, c2
 mul $7, a2, $6
 mov x2, $7
 mov a2, 0
-add $8, $7, 1
+add $8, a2, 1
 mov a2, $8
-add $0, $8, 1
+add $0, c2, 1
 mov c2, $0
 mov x2, $0

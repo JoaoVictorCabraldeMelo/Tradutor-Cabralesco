@@ -70,10 +70,20 @@ void write_table(FILE *file)
       {
         fprintf(file, "%s %s%d\n", tmp->tipo, tmp->value, tmp->escopo);
       }
+      else if (strcmp(tmp->tipo, "intlist") == 0 && strcmp(tmp->tipo_funcao, "Nao eh") == 0)
+      {
+        fprintf(file, "int %s%d [] = { 0 }\n", tmp->value, tmp->escopo);
+      }
+      else if (strcmp(tmp->tipo, "floatlist") == 0 && strcmp(tmp->tipo_funcao, "Nao eh") == 0)
+      {
+        fprintf(file, "float %s%d [] = { 0 }\n", tmp->value, tmp->escopo);
+      }
 
       tmp = tmp->next;
     }
   }
+
+  fprintf(file, "int NIL [] = { 0 }\n");
 }
 
 void write_code(FILE *file)
@@ -181,6 +191,7 @@ void generate_mul_div_expression(FILE *file, Node *expression)
     }
     else
     {
+      //dois ids
       if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
           strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
           strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -189,6 +200,7 @@ void generate_mul_div_expression(FILE *file, Node *expression)
         fprintf(file, "div $%d, %s%d, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
                 expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      //duas consts
       else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -196,30 +208,53 @@ void generate_mul_div_expression(FILE *file, Node *expression)
       {
         fprintf(file, "div $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
+      //id e expressão
       else if (expression->filhos[0]->terminal_value != NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
       {
         fprintf(file, "div $%d, %s%d, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo, get_anterior(1));
       }
+      //id e const
       else if (expression->filhos[0]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") == 0)
+      {
+        fprintf(file, "div $%d, %s%d, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
+                expression->filhos[2]->terminal_value->valor);
+      }
+      //const e expression
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value == NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") == 0)
       {
         fprintf(file, "div $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
+      //const e id
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->production_value, "const") == 0 && strcmp(expression->filhos[0]->production_value, "const") != 0)
+      {
+        fprintf(file, "div $%d, %s, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor,
+                expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
+      }
+      //expressão e id
       else if (expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->production_value, "const") != 0 && strcmp(expression->filhos[0]->production_value, "const") != 0)
       {
         fprintf(file, "div $%d, $%d, %s%d\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      //expressão e const
       else if (expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->production_value, "const") == 0)
       {
         fprintf(file, "div $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
+      //expressão e expressão
       else
       {
         fprintf(file, "div $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
@@ -235,6 +270,7 @@ void generate_sub_add_expression(FILE *file, Node *expression)
   {
     if (strcmp(expression->filhos[1]->terminal_value->valor, "+") == 0)
     {
+      //id e id
       if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
           strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
           strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -243,6 +279,7 @@ void generate_sub_add_expression(FILE *file, Node *expression)
         fprintf(file, "add $%d, %s%d, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
                 expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      // const e const
       else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -250,30 +287,53 @@ void generate_sub_add_expression(FILE *file, Node *expression)
       {
         fprintf(file, "add $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
+      //id e expressão
       else if (expression->filhos[0]->terminal_value != NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
       {
         fprintf(file, "add $%d, %s%d, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo, get_anterior(1));
       }
-      else if (expression->filhos[0]->terminal_value != NULL &&
+      //id e const
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") == 0)
+      {
+        fprintf(file, "add $%d, %s%d, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
+                expression->filhos[2]->terminal_value->valor);
+      }
+      // const e expression
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value == NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") == 0)
       {
         fprintf(file, "add $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
-      else if (expression->filhos[2]->terminal_value != NULL &&
+      // const e id
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
-               strcmp(expression->filhos[2]->production_value, "const") != 0 && strcmp(expression->filhos[0]->production_value, "const") != 0)
+               strcmp(expression->filhos[0]->production_value, "const") == 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
+      {
+        fprintf(file, "add $%d, %s, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor,
+                expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
+      }
+      // expression e id
+      else if (expression->filhos[2]->terminal_value != NULL && expression->filhos[0]->terminal_value == NULL &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[2]->production_value, "const") != 0)
       {
         fprintf(file, "add $%d, $%d, %s%d\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      //expression e const
       else if (expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->production_value, "const") == 0)
       {
         fprintf(file, "add $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
+      //expression e expression
       else
       {
         fprintf(file, "add $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));
@@ -281,6 +341,7 @@ void generate_sub_add_expression(FILE *file, Node *expression)
     }
     else
     {
+      //id e id
       if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
           strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
           strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -289,6 +350,7 @@ void generate_sub_add_expression(FILE *file, Node *expression)
         fprintf(file, "sub $%d, %s%d, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
                 expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      //const e const
       if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
           strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
           strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
@@ -296,30 +358,53 @@ void generate_sub_add_expression(FILE *file, Node *expression)
       {
         fprintf(file, "sub $%d, %s, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[2]->terminal_value->valor);
       }
+      //id e expression
       else if (expression->filhos[0]->terminal_value != NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
       {
         fprintf(file, "sub $%d, %s%d, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo, get_anterior(1));
       }
-      else if (expression->filhos[0]->terminal_value != NULL &&
+      //id e const
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") == 0)
+      {
+        fprintf(file, "sub $%d, %s%d, %s\n", get_value(), expression->filhos[0]->terminal_value->valor, expression->filhos[0]->terminal_value->escopo,
+                expression->filhos[2]->terminal_value->valor);
+      }
+      //const e expressão
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value == NULL &&
                strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[0]->production_value, "const") == 0)
       {
         fprintf(file, "sub $%d, %s, $%d\n", get_value(), expression->filhos[0]->terminal_value->valor, get_anterior(1));
       }
+      //const e id
+      else if (expression->filhos[0]->terminal_value != NULL && expression->filhos[2]->terminal_value != NULL &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->production_value, "const") == 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
+      {
+        fprintf(file, "sub $%d, %s, %s%d\n", get_value(), expression->filhos[0]->terminal_value->valor,
+                expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
+      }
+      //expressão e id
       else if (expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[2]->type, "int_to_float") != 0 && strcmp(expression->filhos[2]->type, "float_to_int") != 0 &&
+               strcmp(expression->filhos[0]->type, "int_to_float") != 0 && strcmp(expression->filhos[0]->type, "float_to_int") != 0 &&
                strcmp(expression->filhos[2]->production_value, "const") != 0 && strcmp(expression->filhos[2]->production_value, "const") != 0)
       {
         fprintf(file, "sub $%d, $%d, %s%d\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor, expression->filhos[2]->terminal_value->escopo);
       }
+      //expressão e const
       else if (expression->filhos[2]->terminal_value != NULL &&
                strcmp(expression->filhos[2]->type, "int_to_float") == 0 && strcmp(expression->filhos[2]->type, "float_to_int") == 0 &&
                strcmp(expression->filhos[2]->production_value, "const") == 0)
       {
         fprintf(file, "sub $%d, $%d, %s\n", get_value(), get_anterior(1), expression->filhos[2]->terminal_value->valor);
       }
+      //expressão e expressão
       else
       {
         fprintf(file, "sub $%d, $%d, $%d\n", get_value(), get_anterior(2), get_anterior(1));

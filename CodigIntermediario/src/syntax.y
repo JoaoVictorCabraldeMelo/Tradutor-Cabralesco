@@ -140,6 +140,7 @@ variableParam:
     strcat(tipo, $2->valor);
 
     verify_context($3->valor);
+    verify_redeclaration($3->valor);
 
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
@@ -171,6 +172,7 @@ variableParam:
     Simbolo sim;
 
     verify_context($2->valor);
+    verify_redeclaration($2->valor);
 
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
@@ -462,36 +464,24 @@ call:
   }
 
 argList:
-  argList ',' ID {
+  argList ',' expression {
     $$ = aloca_no("argList", "undefined");
 
     nro_argumentos++;
 
-    strcpy($3->tipo, get_type_id($3->valor, $3));
-
     $$->filhos[0] = $1;
-    $$->filhos[1] = aloca_no("", $3->tipo);
+    $$->filhos[2] = $3;
 
-    put_arg_in_list($3->linha, $3->coluna, $3->tipo, $$->filhos[1]);
-
-    $3->escopo = escopo_atual->scope_size;
-
-    coloca_terminal($$->filhos[1], $3);
+    put_arg_in_list(0, 0, $3->type, $3);
   }
-  | ID {
+  | expression {
+    $$ = aloca_no("argList", "undefined");
 
     nro_argumentos++;
 
-    strcpy($1->tipo, get_type_id($1->valor, $1));
+    $$->filhos[0] = $1;
 
-    $$ = aloca_no("argList", $1->tipo);
-    $$->filhos[0] = aloca_no("", $1->tipo);
-
-    put_arg_in_list($1->linha, $1->coluna, $1->tipo, $$->filhos[0]);
-
-    $1->escopo = escopo_atual->scope_size;
-
-    coloca_terminal($$->filhos[0], $1);
+    put_arg_in_list(0, 0, $1->type, $1);
   }
   | %empty {
     $$ = NULL;

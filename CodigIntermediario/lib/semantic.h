@@ -102,4 +102,8 @@ Simbolo *return_simbol(char *id);
 
 void verify_context(char *id);
 
+void verify_redeclaration(char *id);
+
+Folha *get_line_column_from_expression(Node *expression);
+
 #endif

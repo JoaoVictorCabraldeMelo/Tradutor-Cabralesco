@@ -1,6 +1,1 @@
-int main() {
-    int x;
-    x = 1;
-    x = x + 1;
-    return x;
-}
+int main() { writeln(5 + 3.4); }
