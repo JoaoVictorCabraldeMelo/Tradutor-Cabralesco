@@ -573,8 +573,8 @@ static const yytype_int16 yyrline[] =
      590,   595,   602,   611,   626,   648,   655,   679,   696,   699,
      704,   711,   732,   735,   741,   748,   768,   771,   777,   784,
      804,   807,   813,   820,   829,   835,   848,   853,   866,   872,
-     875,   878,   887,   890,   893,   898,   910,   922,   934,   949,
-     967,   975,   983,   991,  1001,  1017
+     875,   878,   889,   892,   895,   900,   912,   924,   936,   951,
+     969,   977,   985,   993,  1003,  1019
 };
 #endif
 
@@ -2905,7 +2905,7 @@ yyreduce:
 
     sim.linha = (yyvsp[0].terminal)->linha;
     sim.coluna = (yyvsp[0].terminal)->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = (yyvsp[0].terminal)->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -2920,7 +2920,7 @@ yyreduce:
     (yyval.producao)->filhos[2] = aloca_no("", (yyvsp[-1].terminal)->valor);
 
     (yyvsp[-1].terminal)->escopo = -1;
-    (yyvsp[0].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[0].terminal)->escopo = contador_escopo+1;
     strcpy((yyvsp[0].terminal)->tipo, (yyvsp[-1].terminal)->valor);
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
@@ -2945,7 +2945,7 @@ yyreduce:
 
     sim.linha = (yyvsp[0].terminal)->linha;
     sim.coluna = (yyvsp[0].terminal)->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = (yyvsp[0].terminal)->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -2964,7 +2964,7 @@ yyreduce:
 
     (yyvsp[-2].terminal)->escopo = -1;
     (yyvsp[-1].terminal)->escopo = -1;
-    (yyvsp[0].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[0].terminal)->escopo = contador_escopo+1;
 
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[-1].terminal));
@@ -2985,7 +2985,7 @@ yyreduce:
 
     sim.linha = (yyvsp[0].terminal)->linha;
     sim.coluna = (yyvsp[0].terminal)->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = (yyvsp[0].terminal)->valor;
     sim.tipo = (yyvsp[-1].terminal)->valor;
     sim.nro_parametros = 0;
@@ -2999,7 +2999,7 @@ yyreduce:
     (yyval.producao)->filhos[1] = aloca_no("", (yyvsp[-1].terminal)->valor);
 
     (yyvsp[-1].terminal)->escopo = -1;
-    (yyvsp[0].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[0].terminal)->escopo = contador_escopo+1;
     strcpy((yyvsp[0].terminal)->tipo, (yyvsp[-1].terminal)->valor);
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
@@ -3022,7 +3022,7 @@ yyreduce:
 
     sim.linha = (yyvsp[0].terminal)->linha;
     sim.coluna = (yyvsp[0].terminal)->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = (yyvsp[0].terminal)->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -3040,7 +3040,7 @@ yyreduce:
 
     (yyvsp[-2].terminal)->escopo = -1;
     (yyvsp[-1].terminal)->escopo= -1;
-    (yyvsp[0].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[0].terminal)->escopo = contador_escopo+1;
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[1], (yyvsp[-1].terminal));
@@ -3069,7 +3069,7 @@ yyreduce:
     (yyval.producao)->filhos[0] = aloca_no("", (yyvsp[-3].terminal)->tipo);
     (yyval.producao)->filhos[1] = (yyvsp[-1].producao);
 
-    (yyvsp[-3].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[-3].terminal)->escopo = get_escopo((yyvsp[-3].terminal));
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-3].terminal));
 
@@ -3413,7 +3413,7 @@ yyreduce:
     (yyval.producao)->filhos[1] = aloca_no("", "undefined");
     (yyval.producao)->filhos[2] = (yyvsp[0].producao);
 
-    (yyvsp[-2].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[-2].terminal)->escopo = get_escopo((yyvsp[-2].terminal));
 
     (yyvsp[-1].terminal)->escopo = -1;
 
@@ -3711,39 +3711,41 @@ yyreduce:
 
     (yyval.producao) = aloca_no("", (yyvsp[0].terminal)->tipo);
 
-    (yyvsp[0].terminal)->escopo = escopo_atual->scope_size;
+    (yyvsp[0].terminal)->escopo = get_escopo((yyvsp[0].terminal));
+
+    // $1->escopo = escopo_atual->scope_size;
 
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3719 "./src/syntax.tab.c"
+#line 3721 "./src/syntax.tab.c"
     break;
 
   case 72: /* term: unaryTerm  */
-#line 887 "./src/syntax.y"
+#line 889 "./src/syntax.y"
               {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3727 "./src/syntax.tab.c"
+#line 3729 "./src/syntax.tab.c"
     break;
 
   case 73: /* term: immutable  */
-#line 890 "./src/syntax.y"
+#line 892 "./src/syntax.y"
               {
     (yyval.producao) = (yyvsp[0].producao);
   }
-#line 3735 "./src/syntax.tab.c"
+#line 3737 "./src/syntax.tab.c"
     break;
 
   case 74: /* term: error  */
-#line 893 "./src/syntax.y"
+#line 895 "./src/syntax.y"
            {
     (yyval.producao) = NULL;
   }
-#line 3743 "./src/syntax.tab.c"
+#line 3745 "./src/syntax.tab.c"
     break;
 
   case 75: /* unaryTerm: '!' term  */
-#line 898 "./src/syntax.y"
+#line 900 "./src/syntax.y"
            {
 
     char *type = verify_unary_list((yyvsp[0].producao), (yyvsp[-1].terminal));
@@ -3756,11 +3758,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3760 "./src/syntax.tab.c"
+#line 3762 "./src/syntax.tab.c"
     break;
 
   case 76: /* unaryTerm: '%' term  */
-#line 910 "./src/syntax.y"
+#line 912 "./src/syntax.y"
              {
 
     char *type = verify_unary_list((yyvsp[0].producao), (yyvsp[-1].terminal));
@@ -3773,11 +3775,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3777 "./src/syntax.tab.c"
+#line 3779 "./src/syntax.tab.c"
     break;
 
   case 77: /* unaryTerm: '?' term  */
-#line 922 "./src/syntax.y"
+#line 924 "./src/syntax.y"
              {
 
     char *type = verify_unary_list((yyvsp[0].producao), (yyvsp[-1].terminal));
@@ -3790,11 +3792,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3794 "./src/syntax.tab.c"
+#line 3796 "./src/syntax.tab.c"
     break;
 
   case 78: /* unaryTerm: SUB_ADD term  */
-#line 934 "./src/syntax.y"
+#line 936 "./src/syntax.y"
                  {
 
     char *type = verify_unary_list((yyvsp[0].producao), (yyvsp[-1].terminal));
@@ -3807,11 +3809,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-1].terminal));
   }
-#line 3811 "./src/syntax.tab.c"
+#line 3813 "./src/syntax.tab.c"
     break;
 
   case 79: /* immutable: '(' expression ')'  */
-#line 949 "./src/syntax.y"
+#line 951 "./src/syntax.y"
                      {
     if((yyvsp[-1].producao) != NULL)
       (yyval.producao) = aloca_no("immutable", (yyvsp[-1].producao)->type);
@@ -3828,63 +3830,63 @@ yyreduce:
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[-2].terminal));
     coloca_terminal((yyval.producao)->filhos[2], (yyvsp[0].terminal));
   }
-#line 3832 "./src/syntax.tab.c"
+#line 3834 "./src/syntax.tab.c"
     break;
 
   case 80: /* const: INT  */
-#line 967 "./src/syntax.y"
+#line 969 "./src/syntax.y"
       {
-    (yyval.producao) = aloca_no("int", "int");
+    (yyval.producao) = aloca_no("const", "int");
 
     (yyvsp[0].terminal)->escopo = -1;
     strcpy((yyvsp[0].terminal)->tipo, "int");
     
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3845 "./src/syntax.tab.c"
+#line 3847 "./src/syntax.tab.c"
     break;
 
   case 81: /* const: FLOAT  */
-#line 975 "./src/syntax.y"
+#line 977 "./src/syntax.y"
           {
-    (yyval.producao) = aloca_no("float", "float");
+    (yyval.producao) = aloca_no("const", "float");
 
     (yyvsp[0].terminal)->escopo = -1;
     strcpy((yyvsp[0].terminal)->tipo, "float");
 
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3858 "./src/syntax.tab.c"
+#line 3860 "./src/syntax.tab.c"
     break;
 
   case 82: /* const: STRING  */
-#line 983 "./src/syntax.y"
+#line 985 "./src/syntax.y"
            {
-    (yyval.producao) = aloca_no("string", "string");
+    (yyval.producao) = aloca_no("const", "string");
 
     (yyvsp[0].terminal)->escopo = -1;
     strcpy((yyvsp[0].terminal)->tipo, "string");
 
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3871 "./src/syntax.tab.c"
+#line 3873 "./src/syntax.tab.c"
     break;
 
   case 83: /* const: NIL  */
-#line 991 "./src/syntax.y"
+#line 993 "./src/syntax.y"
         {
-    (yyval.producao) = aloca_no("list", "list");
+    (yyval.producao) = aloca_no("const", "list");
 
     (yyvsp[0].terminal)->escopo = -1;
     strcpy((yyvsp[0].terminal)->tipo, "list");
 
     coloca_terminal((yyval.producao), (yyvsp[0].terminal));
   }
-#line 3884 "./src/syntax.tab.c"
+#line 3886 "./src/syntax.tab.c"
     break;
 
   case 84: /* listOP: FUNCTION  */
-#line 1001 "./src/syntax.y"
+#line 1003 "./src/syntax.y"
            {
     char *type;
 
@@ -3901,11 +3903,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3905 "./src/syntax.tab.c"
+#line 3907 "./src/syntax.tab.c"
     break;
 
   case 85: /* listOP: INFIX  */
-#line 1017 "./src/syntax.y"
+#line 1019 "./src/syntax.y"
           {
     (yyval.producao) = aloca_no("listOp", "constructor");
     (yyval.producao)->filhos[0] = aloca_no("", "undefined");
@@ -3914,11 +3916,11 @@ yyreduce:
 
     coloca_terminal((yyval.producao)->filhos[0], (yyvsp[0].terminal));
   }
-#line 3918 "./src/syntax.tab.c"
+#line 3920 "./src/syntax.tab.c"
     break;
 
 
-#line 3922 "./src/syntax.tab.c"
+#line 3924 "./src/syntax.tab.c"
 
       default: break;
     }
@@ -4143,7 +4145,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 1026 "./src/syntax.y"
+#line 1028 "./src/syntax.y"
 
 
 void yyerror(const char *s){

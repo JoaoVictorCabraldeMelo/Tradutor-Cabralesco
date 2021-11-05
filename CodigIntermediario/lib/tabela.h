@@ -50,4 +50,6 @@ int calcula_nro_parametros();
 
 void seta_argumentos(Simbolo *sim);
 
+int get_escopo(Folha *sim);
+
 #endif

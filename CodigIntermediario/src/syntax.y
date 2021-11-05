@@ -307,7 +307,7 @@ functionParamsList:
 
     sim.linha = $4->linha;
     sim.coluna = $4->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = $4->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -322,7 +322,7 @@ functionParamsList:
     $$->filhos[2] = aloca_no("", $3->valor);
 
     $3->escopo = -1;
-    $4->escopo = escopo_atual->scope_size;
+    $4->escopo = contador_escopo+1;
     strcpy($4->tipo, $3->valor);
 
     coloca_terminal($$->filhos[1], $3);
@@ -342,7 +342,7 @@ functionParamsList:
 
     sim.linha = $5->linha;
     sim.coluna = $5->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = $5->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -361,7 +361,7 @@ functionParamsList:
 
     $3->escopo = -1;
     $4->escopo = -1;
-    $5->escopo = escopo_atual->scope_size;
+    $5->escopo = contador_escopo+1;
 
     coloca_terminal($$->filhos[1], $3);
     coloca_terminal($$->filhos[2], $4);
@@ -377,7 +377,7 @@ functionParamsList:
 
     sim.linha = $2->linha;
     sim.coluna = $2->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = $2->valor;
     sim.tipo = $1->valor;
     sim.nro_parametros = 0;
@@ -391,7 +391,7 @@ functionParamsList:
     $$->filhos[1] = aloca_no("", $1->valor);
 
     $1->escopo = -1;
-    $2->escopo = escopo_atual->scope_size;
+    $2->escopo = contador_escopo+1;
     strcpy($2->tipo, $1->valor);
 
     coloca_terminal($$->filhos[0], $1);
@@ -409,7 +409,7 @@ functionParamsList:
 
     sim.linha = $3->linha;
     sim.coluna = $3->coluna;
-    sim.escopo = escopo_atual->scope_size;
+    sim.escopo = contador_escopo+1;
     sim.value = $3->valor;
     sim.nro_parametros = 0;
     sim.eh_parametro = true;
@@ -427,7 +427,7 @@ functionParamsList:
 
     $1->escopo = -1;
     $2->escopo= -1;
-    $3->escopo = escopo_atual->scope_size;
+    $3->escopo = contador_escopo+1;
 
     coloca_terminal($$->filhos[0], $1);
     coloca_terminal($$->filhos[1], $2);
@@ -453,7 +453,7 @@ call:
     $$->filhos[0] = aloca_no("", $1->tipo);
     $$->filhos[1] = $3;
 
-    $1->escopo = escopo_atual->scope_size;
+    $1->escopo = get_escopo($1);
 
     coloca_terminal($$->filhos[0], $1);
 
@@ -686,7 +686,7 @@ expression:
     $$->filhos[1] = aloca_no("", "undefined");
     $$->filhos[2] = $3;
 
-    $1->escopo = escopo_atual->scope_size;
+    $1->escopo = get_escopo($1);
 
     $2->escopo = -1;
 
@@ -880,7 +880,9 @@ term:
 
     $$ = aloca_no("", $1->tipo);
 
-    $1->escopo = escopo_atual->scope_size;
+    $1->escopo = get_escopo($1);
+
+    // $1->escopo = escopo_atual->scope_size;
 
     coloca_terminal($$, $1);
   }
@@ -965,7 +967,7 @@ immutable:
 
 const:
   INT {
-    $$ = aloca_no("int", "int");
+    $$ = aloca_no("const", "int");
 
     $1->escopo = -1;
     strcpy($1->tipo, "int");
@@ -973,7 +975,7 @@ const:
     coloca_terminal($$, $1);
   }
   | FLOAT {
-    $$ = aloca_no("float", "float");
+    $$ = aloca_no("const", "float");
 
     $1->escopo = -1;
     strcpy($1->tipo, "float");
@@ -981,7 +983,7 @@ const:
     coloca_terminal($$, $1);
   }
   | STRING {
-    $$ = aloca_no("string", "string");
+    $$ = aloca_no("const", "string");
 
     $1->escopo = -1;
     strcpy($1->tipo, "string");
@@ -989,7 +991,7 @@ const:
     coloca_terminal($$, $1);
   }
   | NIL {
-    $$ = aloca_no("list", "list");
+    $$ = aloca_no("const", "list");
 
     $1->escopo = -1;
     strcpy($1->tipo, "list");

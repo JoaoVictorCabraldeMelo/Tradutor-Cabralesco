@@ -10,6 +10,8 @@ Escope *primeiro_escopo = NULL;
 
 Escope *ultimo_escopo = NULL;
 
+int contador_escopo = 0;
+
 Escope *bota_escopo()
 {
   Escope *novo_escopo = (Escope *)malloc(sizeof(Escope));
@@ -32,7 +34,8 @@ Escope *bota_escopo()
   else
   {
     //aloca novo escopo que nao e global
-    novo_escopo->scope_size = escopo_atual->scope_size+1;
+    contador_escopo++;
+    novo_escopo->scope_size = contador_escopo;
 
     novo_escopo->superior = escopo_atual;
 

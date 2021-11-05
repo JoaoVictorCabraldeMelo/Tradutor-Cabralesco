@@ -17,6 +17,8 @@ extern Escope * primeiro_escopo;
 
 extern Escope * ultimo_escopo;
 
+extern int contador_escopo;
+
 Escope* bota_escopo();
 
 void fecha_escopo();
